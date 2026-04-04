@@ -25,6 +25,7 @@
   let activeLogoImage = "";
   let activeLogoAlt = "Logo";
   let activeLogoReadyPromise = Promise.resolve();
+  let hasRenderedCmsData = false;
   const STATIC_HOST_REWRITES = [
     ["../static.wixstatic.com/", "https://static.wixstatic.com/"],
     ["../static.parastorage.com/", "https://static.parastorage.com/"],
@@ -1558,6 +1559,26 @@
     document.documentElement.removeAttribute("data-cms-pending");
   }
 
+  function showCmsUnavailableFallback() {
+    const body = document.body;
+    if (!body) {
+      clearPendingState();
+      return;
+    }
+
+    body.innerHTML = `
+      <main style="min-height:100vh;display:grid;place-items:center;padding:32px;background:#f7efd7;color:#17120d;font-family:'Courier New',Courier,monospace;">
+        <section style="max-width:34rem;text-align:center;">
+          <p style="margin:0 0 12px;font-size:12px;letter-spacing:.28em;text-transform:uppercase;">Frankie's Burrito</p>
+          <h1 style="margin:0 0 16px;font:700 clamp(2.2rem,6vw,4rem)/.95 Arial,Helvetica,sans-serif;letter-spacing:.06em;text-transform:uppercase;">Frontend Connected, CMS Unavailable</h1>
+          <p style="margin:0;line-height:1.8;">The page could not load fresh content from the WordPress backend. Retry in a moment or check <code>/api/site</code> and <code>/healthz</code>.</p>
+        </section>
+      </main>
+    `;
+    setLogoReadyState(true);
+    clearPendingState();
+  }
+
   function preloadImage(src) {
     if (!src) {
       return Promise.resolve();
@@ -1621,6 +1642,7 @@
 
   function renderCmsData(data) {
     window.__FRANKIES_CMS_DATA__ = data;
+    hasRenderedCmsData = true;
     applyPageContent(data);
     rewriteInternalLinks();
     rewriteLegacyMenuLabels();
@@ -1711,7 +1733,9 @@
   }, 50);
 
   window.setTimeout(() => {
-    clearPendingState();
+    if (!hasRenderedCmsData) {
+      showCmsUnavailableFallback();
+    }
   }, 3000);
 
   warmCmsRequest()
@@ -1722,8 +1746,9 @@
       initLinkPrefetch();
     })
     .catch((error) => {
-      setLogoReadyState(true);
-      clearPendingState();
+      if (!hasRenderedCmsData) {
+        showCmsUnavailableFallback();
+      }
       console.error("Failed to apply CMS bridge", error);
     });
 })();
