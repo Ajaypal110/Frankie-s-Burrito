@@ -55,7 +55,9 @@ function heroTemplate(settings) {
 function homepageTemplate(data) {
   const { settings, testimonials } = data;
   const galleryImages = settings.gallery_images || [];
-  const skulls = new Array(4).fill(settings.skull_image);
+  const fallbackSkull = "https://static.wixstatic.com/media/da4e2b_88a856d8e39542a1aba400685cd3a2d0~mv2.png/v1/fill/w_48,h_67,al_c,q_85,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/SKULL.avif";
+  const skullSrc = settings.skull_image && String(settings.skull_image).trim() !== "" ? settings.skull_image : fallbackSkull;
+  const skulls = new Array(4).fill(skullSrc);
 
   return `
     ${heroTemplate(settings)}

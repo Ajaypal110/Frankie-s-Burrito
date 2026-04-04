@@ -175,6 +175,10 @@ img {
 
 .skull-row img {
   width: 48px;
+  height: auto;
+  min-height: 48px;
+  object-fit: contain;
+  filter: brightness(0.15); /* Ensures the skull design is dark/visible on light background */
 }
 
 .testimonials {

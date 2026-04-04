@@ -1,0 +1,222 @@
+{
+  "settings": {
+    "brand_name": "UPTOWN 66",
+    "logo_image": "http://localhost:8883/wp-content/uploads/2026/04/WhatsApp_Image_2026-04-04_at_11.49.47_AM-removebg-preview-1.png",
+    "hero_title": "UPTOWN 66",
+    "hero_copy": "UPTOWN 66 IS AN EXPLORATION OF AUTHENTIC MEXICAN STREET FOOD THROUGH THE LENS OF CHEF NUNO. SOURCING FRESHEST LOCAL PRODUCE AND HIGHEST QUALITY MEATS AND SEAFOOD.",
+    "secret_sauce_title": "THE SECRET SAUCE OF UPTOWN 66",
+    "secret_sauce_copy": "WITH THE CELEBRATION OF OUR CULINARY PASSION, UPTOWN 66 FEATURES HAND-PRESSED TORTILLAS MADE FROM HEIRLOOM CORN SOURCED FROM OAXACA AND SIGNATURE BARBACOA CRAFTED FROM SHORT-RIB, OXTAIL, AND BEEF CHEEK, ALL SLOW-BRAISED WITH MEXICAN CHILIS TO DEVELOP RICH, AUTHENTIC FLAVORS.",
+    "order_url": "https://frankiesbreakfastburritos.toast.site/",
+    "menu_primary_label": "MENU",
+    "menu_primary_url": "https://www.uptown66.miami/miamimenu",
+    "menu_secondary_label": "MENU",
+    "menu_secondary_url": "https://www.uptown66.miami/hallandalemenu",
+    "follow_label": "FOLLOW US",
+    "instagram_url": "https://www.instagram.com/uptown66miami/",
+    "footer_note": "Authentic Mexican street food. Headless, editable, and fast.",
+    "hero_left_image": "http://localhost:8883/wp-content/uploads/2026/04/IMGL0082_JPG-3.avif",
+    "hero_center_image": "https://static.wixstatic.com/media/da4e2b_71a8a0efdfd7425da73e0202e531a5b3~mv2.jpg/v1/fill/w_2500,h_1666,al_c/da4e2b_71a8a0efdfd7425da73e0202e531a5b3~mv2.jpg",
+    "hero_right_image": "https://static.wixstatic.com/media/da4e2b_71a8a0efdfd7425da73e0202e531a5b3~mv2.jpg/v1/fill/w_147,h_98,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/3Q5A0140.jpg",
+    "skull_image": "http://localhost:8883/wp-content/uploads/2026/04/SKULL.avif",
+    "gallery_images": [
+      "https://static.wixstatic.com/media/da4e2b_98c8e386a1484ab28115d33ceca90c6b~mv2.jpg/v1/fill/w_147,h_220,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMGL0493_JPG.jpg",
+      "https://static.wixstatic.com/media/da4e2b_27d4859a62e64fb08564fef816cd15ef~mv2.jpg/v1/fill/w_147,h_184,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/3Q5A0141.jpg",
+      "https://static.wixstatic.com/media/da4e2b_94aeb82a461941a580b71c72d4deface~mv2.jpg/v1/fill/w_147,h_184,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/3Q5A0235.jpg",
+      "https://static.wixstatic.com/media/da4e2b_74d8698ded274f3dae5101dd7c0c4de2~mv2.jpg/v1/fill/w_147,h_182,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMG_2672.jpg"
+    ],
+    "about_title": "GET TO KNOW US",
+    "about_copy": "Inspired by our creators Nuno Grullon and Akira van Egmond, Upper East Side MiMo District's favorite Mexican cantina is an exploration of authentic Mexican street food through the lens of Chef Nuno. Sourcing the freshest local produce and highest quality meats and seafood, Uptown 66 has become a standard for quality and consistency for locals and visitors alike. Our atmosphere evolves throughout the day, from lunch and happy hour to late-night dining, while staying grounded in flavor, craft, and consistency.",
+    "about_banner_image": "https://static.wixstatic.com/media/da4e2b_71a8a0efdfd7425da73e0202e531a5b3~mv2.jpg/v1/fill/w_147,h_98,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/3Q5A0140.jpg",
+    "about_portrait_image": "https://static.wixstatic.com/media/da4e2b_e103d357da0a4916b06677b312345181_mv2.png/v1/crop/x_112,y_0,w_345,h_480/fill/w_86,h_120,al_c,q_85,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMG_2459_heic.png",
+    "about_primary_image": "https://static.wixstatic.com/media/da4e2b_f3b6ad77ffc44f4497ea6512d9897c46_mv2.jpg/v1/fill/w_147,h_98,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMGL0409_JPG.jpg",
+    "about_secondary_image": "https://static.wixstatic.com/media/da4e2b_0046467888ae4c36bcb37ea88d6821c4~mv2.jpg/v1/fill/w_147,h_221,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMGL0127_JPG.jpg",
+    "press_title": "PRESS",
+    "press_copy": "Featured coverage for Uptown 66, from Miami food press to national recognition.",
+    "press_item_1_image": "https://static.wixstatic.com/media/da4e2b_cc208a132d5d4d97893e956871c56f1f_mv2.jpeg/v1/fill/w_147,h_83,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/MIA_104UPTOWN6600MIAPPP.jpg",
+    "press_item_1_outlet": "MIAMI HERALD",
+    "press_item_1_title": "This outdoor Mexican restaurant in Miami just won a national TV contest for best taco",
+    "press_item_1_url": "https://www.miamiherald.com/miami-com/restaurants/article278985014.html",
+    "press_item_2_image": "https://static.wixstatic.com/media/da4e2b_d817c74e1f7e40adbe5f88041ad0b593~mv2.webp/v1/fill/w_147,h_91,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/tacos_courtesy_of_uptown_66.webp",
+    "press_item_2_outlet": "MIAMI NEW TIMES",
+    "press_item_2_title": "Miami's 2022 Best Tacos",
+    "press_item_2_url": "https://www.miaminewtimes.com/best-of/2022/eat-and-drink/best-tacos-14713365",
+    "press_item_3_image": "https://static.wixstatic.com/media/da4e2b_b834d47785c34708b903223fcb2f17b0_mv2.jpg/v1/fill/w_144,h_118,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/nuno-grullon-gma2.jpg",
+    "press_item_3_outlet": "MIAMI NEW TIMES",
+    "press_item_3_title": "Good Morning America Proclaims Miami Taqueria Tops in U.S.",
+    "press_item_3_url": "https://www.miaminewtimes.com/restaurants/good-morning-america-proclaimed-this-taqueria-tops-in-miami-17734705",
+    "press_item_4_image": "https://static.wixstatic.com/media/da4e2b_b99bae0e13e741b1952c05cdba8514bf_mv2.jpeg/v1/fill/w_147,h_97,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/MIA_105UPTOWN6600MIAPPP.jpg",
+    "press_item_4_outlet": "BROKEN PLATE",
+    "press_item_4_title": "A Miami Taco Place is Crowned Number One",
+    "press_item_4_url": "https://www.brokenpalate.com/p/a-miami-taco-place-is-crowned-number",
+    "locations_title": "Locations - Miami",
+    "locations_copy": "Locations in Miami MiMo and Hallandale Atlantic Village. Update every address, menu link, and ordering link from wp-admin.",
+    "locations_miami_image": "",
+    "locations_hallandale_image": "",
+    "miami_label": "Miami",
+    "hallandale_label": "Hallandale",
+    "hallandale_subtitle": "Atlantic Village",
+    "hours_heading": "HOURS & LOCATION",
+    "happy_hour_heading": "HAPPY HOUR",
+    "hallandale_happy_hour_copy": "Monday-Friday\n4pm-7pm",
+    "menu_page_title": "MENU",
+    "menu_page_brand": "UPTOWN 66",
+    "miami_menu_sections": [
+      {
+        "title": "Tacos",
+        "items": [
+          {
+            "name": "Barbacoa Taco",
+            "price": "$6",
+            "description": "Slow-braised beef, salsa, onion, cilantro."
+          },
+          {
+            "name": "Mushroom Taco",
+            "price": "$5",
+            "description": "Roasted mushrooms, herbs, salsa verde."
+          }
+        ]
+      },
+      {
+        "title": "Burritos",
+        "items": [
+          {
+            "name": "Steak Burrito",
+            "price": "$15",
+            "description": "Rice, beans, salsa, crema, and grilled steak."
+          }
+        ]
+      }
+    ],
+    "hallandale_menu_sections": [
+      {
+        "title": "Specialties",
+        "items": [
+          {
+            "name": "Birria Quesadilla",
+            "price": "$16",
+            "description": "Crispy tortilla, cheese, consommu00e9, and birria."
+          }
+        ]
+      },
+      {
+        "title": "Drinks",
+        "items": [
+          {
+            "name": "Horchata",
+            "price": "$5",
+            "description": "House-made cinnamon rice drink."
+          }
+        ]
+      }
+    ],
+    "home_main_markup": "",
+    "about_main_markup": "",
+    "locations_main_markup": "",
+    "press_main_markup": "",
+    "mimo_main_markup": "",
+    "hallandale_main_markup": "",
+    "miami_menu_markup": "",
+    "hallandale_menu_markup": "",
+    "nav_items": [
+      {
+        "label": "HOME",
+        "slug": "/"
+      },
+      {
+        "label": "ABOUT",
+        "slug": "/about"
+      },
+      {
+        "label": "LOCATIONS",
+        "slug": "/locations"
+      },
+      {
+        "label": "PRESS",
+        "slug": "/press"
+      }
+    ]
+  },
+  "testimonials": [
+    {
+      "id": 5,
+      "quote": "Say it with me now, we&#8217;re not here for the atmosphere, we&#8217;re here for birria tacos, steak burritos, and churros! This spot on extremely busy Biscayne is the authentic taco spot that we all needed down here. I&#8217;ve eaten here twice since I discovered it a few weeks ago and I&#8217;m already thinking of my next visit.\nThe caesar salad with chicken is amazing which is something I rarely say at Mexican spots. Anyways I highly recommend you come check this place out if you haven&#8217;t!",
+      "author": "Alex Orchilles",
+      "title": "Alex Orchilles",
+      "featured_image": ""
+    },
+    {
+      "id": 6,
+      "quote": "Wowowow! I am pleased to find a place in Miami where they focus on the food and not just atmosphere. This place has it all! Everything we had was amazing. What I loved the most was the shrimp. Yes for Uptown 66!! Prices are super decent too for the food it&#8217;s so worth it. See you soon uptown.",
+      "author": "Mary Ellen Carrillo",
+      "title": "Mary Ellen Carrillo",
+      "featured_image": ""
+    },
+    {
+      "id": 7,
+      "quote": "Found this little spot when we were craving tacos. Saw the great reviews and decided to check it out for myself. Boy do I not regret it. Such delicious food! Perfect portion sizes. The service was great and very attentive. We ordered birria, flautas, barbacoa, mushroom and flan. Delicious delicious delicious. Check it out for yourself!",
+      "author": "Sandy Cheng",
+      "title": "Sandy Cheng",
+      "featured_image": ""
+    }
+  ],
+  "locations": [
+    {
+      "id": 9,
+      "name": "Hallandale",
+      "copy": "Second Uptown 66 location with editable content from WordPress.",
+      "address": "801 N Federal Hwy Suite 109-110",
+      "city": "Hallandale Beach, FL 33009",
+      "menu_url": "https://www.uptown66.miami/hallandalemenu",
+      "order_url": "https://www.uptown66.miami/hallandalemenu",
+      "hours": "Update in wp-admin",
+      "phone": "Update in wp-admin",
+      "featured_image": ""
+    },
+    {
+      "id": 8,
+      "name": "MiMo",
+      "copy": "Original Uptown 66 location serving Mexican street food in Miami.",
+      "address": "6600 Biscayne Blvd",
+      "city": "Miami, FL 33138",
+      "menu_url": "https://www.uptown66.miami/miamimenu",
+      "order_url": "https://www.uptown66.miami/miamimenu",
+      "hours": "Update in wp-admin",
+      "phone": "Update in wp-admin",
+      "featured_image": ""
+    }
+  ],
+  "press_items": [
+    {
+      "id": "press-option-1",
+      "title": "This outdoor Mexican restaurant in Miami just won a national TV contest for best taco",
+      "excerpt": "",
+      "outlet": "MIAMI HERALD",
+      "external_url": "https://www.miamiherald.com/miami-com/restaurants/article278985014.html",
+      "featured_image": "https://static.wixstatic.com/media/da4e2b_cc208a132d5d4d97893e956871c56f1f_mv2.jpeg/v1/fill/w_147,h_83,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/MIA_104UPTOWN6600MIAPPP.jpg"
+    },
+    {
+      "id": "press-option-2",
+      "title": "Miami's 2022 Best Tacos",
+      "excerpt": "",
+      "outlet": "MIAMI NEW TIMES",
+      "external_url": "https://www.miaminewtimes.com/best-of/2022/eat-and-drink/best-tacos-14713365",
+      "featured_image": "https://static.wixstatic.com/media/da4e2b_d817c74e1f7e40adbe5f88041ad0b593~mv2.webp/v1/fill/w_147,h_91,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/tacos_courtesy_of_uptown_66.webp"
+    },
+    {
+      "id": "press-option-3",
+      "title": "Good Morning America Proclaims Miami Taqueria Tops in U.S.",
+      "excerpt": "",
+      "outlet": "MIAMI NEW TIMES",
+      "external_url": "https://www.miaminewtimes.com/restaurants/good-morning-america-proclaimed-this-taqueria-tops-in-miami-17734705",
+      "featured_image": "https://static.wixstatic.com/media/da4e2b_b834d47785c34708b903223fcb2f17b0_mv2.jpg/v1/fill/w_144,h_118,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/nuno-grullon-gma2.jpg"
+    },
+    {
+      "id": "press-option-4",
+      "title": "A Miami Taco Place is Crowned Number One",
+      "excerpt": "",
+      "outlet": "BROKEN PLATE",
+      "external_url": "https://www.brokenpalate.com/p/a-miami-taco-place-is-crowned-number",
+      "featured_image": "https://static.wixstatic.com/media/da4e2b_b99bae0e13e741b1952c05cdba8514bf_mv2.jpeg/v1/fill/w_147,h_97,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/MIA_105UPTOWN6600MIAPPP.jpg"
+    }
+  ]
+}
