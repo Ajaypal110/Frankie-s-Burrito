@@ -17,6 +17,7 @@ final class Frankies_Headless_CMS {
 		add_action( 'init', array( __CLASS__, 'register_post_types' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'register_settings_page' ) );
 		add_action( 'admin_init', array( __CLASS__, 'register_settings' ) );
+		add_action( 'add_meta_boxes', array( __CLASS__, 'register_meta_boxes' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_admin_assets' ) );
 		add_action( 'save_post_fb_testimonial', array( __CLASS__, 'save_testimonial_meta' ) );
 		add_action( 'save_post_fb_location', array( __CLASS__, 'save_location_meta' ) );
@@ -43,7 +44,7 @@ final class Frankies_Headless_CMS {
 					'singular_name' => __( 'Testimonial', 'frankies-headless-cms' ),
 				),
 				'public'       => false,
-				'show_ui'      => false,
+				'show_ui'      => true,
 				'show_in_menu' => false,
 				'supports'     => array( 'title', 'editor', 'thumbnail', 'page-attributes' ),
 				'menu_icon'    => 'dashicons-format-quote',
@@ -344,6 +345,7 @@ final class Frankies_Headless_CMS {
 			'frankies_headless_branding'          => __( 'Core brand labels used across the homepage.', 'frankies-headless-cms' ),
 			'frankies_headless_home_hero'         => __( 'Main homepage heading and intro copy.', 'frankies-headless-cms' ),
 			'frankies_headless_home_menu'         => __( 'Homepage buttons, Instagram link, and footer text.', 'frankies-headless-cms' ),
+			'frankies_headless_home_table_talk'   => __( 'Manage the testimonials used by the home page Table Talk section.', 'frankies-headless-cms' ),
 			'frankies_headless_home_images'       => __( 'Upload or select the images used in the hero and gallery, then drag gallery items into order.', 'frankies-headless-cms' ),
 			'frankies_headless_about'             => __( 'Heading, copy, and images for the About page.', 'frankies-headless-cms' ),
 			'frankies_headless_locations_page'    => __( 'Heading and intro copy for the Locations page.', 'frankies-headless-cms' ),
@@ -419,6 +421,7 @@ final class Frankies_Headless_CMS {
 			'frankies_headless_branding'    => __( 'Branding', 'frankies-headless-cms' ),
 			'frankies_headless_home_hero'   => __( 'Hero Content', 'frankies-headless-cms' ),
 			'frankies_headless_home_menu'   => __( 'Buttons And Footer', 'frankies-headless-cms' ),
+			'frankies_headless_home_table_talk' => __( 'Table Talk', 'frankies-headless-cms' ),
 			'frankies_headless_home_images' => __( 'Images And Gallery', 'frankies-headless-cms' ),
 		);
 
@@ -470,7 +473,11 @@ final class Frankies_Headless_CMS {
 			if ( ! empty( $group['description'] ) ) {
 				echo '<p>' . esc_html( $group['description'] ) . '</p>';
 			}
-			self::render_settings_fields_by_keys( $group['fields'] );
+			if ( ! empty( $group['render_callback'] ) && is_callable( array( __CLASS__, $group['render_callback'] ) ) ) {
+				call_user_func( array( __CLASS__, $group['render_callback'] ) );
+			} else {
+				self::render_settings_fields_by_keys( $group['fields'] );
+			}
 			echo '</div>';
 		}
 
@@ -491,6 +498,12 @@ final class Frankies_Headless_CMS {
 			echo '<p>' . esc_html( $help ) . '</p>';
 		}
 		echo '</div>';
+
+		if ( 'frankies_headless_home_table_talk' === $section_id ) {
+			self::render_home_table_talk_section();
+			echo '</section>';
+			return;
+		}
 
 		foreach ( self::settings_fields() as $field_key => $field ) {
 			if ( ( $field['section'] ?? '' ) !== $section_id ) {
@@ -541,6 +554,45 @@ final class Frankies_Headless_CMS {
 			);
 			echo '</div>';
 		}
+	}
+
+	private static function render_home_table_talk_section() {
+		$testimonial_count = wp_count_posts( 'fb_testimonial' );
+		$published_count   = isset( $testimonial_count->publish ) ? (int) $testimonial_count->publish : 0;
+		$draft_count       = isset( $testimonial_count->draft ) ? (int) $testimonial_count->draft : 0;
+		$recent_items      = get_posts(
+			array(
+				'post_type'      => 'fb_testimonial',
+				'post_status'    => array( 'publish', 'draft' ),
+				'posts_per_page' => 3,
+				'orderby'        => 'menu_order title',
+				'order'          => 'ASC',
+			)
+		);
+
+		echo '<div class="fb-editor-field">';
+		echo '<p>' . esc_html__( 'The home page Table Talk section uses testimonial entries from the Testimonials area. Add, edit, publish, or reorder testimonials there and the homepage updates from that content.', 'frankies-headless-cms' ) . '</p>';
+		echo '<p><strong>' . esc_html__( 'Published testimonials:', 'frankies-headless-cms' ) . '</strong> ' . esc_html( (string) $published_count ) . '</p>';
+		if ( $draft_count > 0 ) {
+			echo '<p><strong>' . esc_html__( 'Draft testimonials:', 'frankies-headless-cms' ) . '</strong> ' . esc_html( (string) $draft_count ) . '</p>';
+		}
+		echo '<p>';
+		echo '<a class="button button-secondary" href="' . esc_url( admin_url( 'edit.php?post_type=fb_testimonial' ) ) . '">' . esc_html__( 'Manage Testimonials', 'frankies-headless-cms' ) . '</a> ';
+		echo '<a class="button button-primary" href="' . esc_url( admin_url( 'post-new.php?post_type=fb_testimonial' ) ) . '">' . esc_html__( 'Add Testimonial', 'frankies-headless-cms' ) . '</a>';
+		echo '</p>';
+		if ( ! empty( $recent_items ) ) {
+			echo '<p><strong>' . esc_html__( 'Recent testimonials:', 'frankies-headless-cms' ) . '</strong></p>';
+			echo '<ul style="margin:0 0 0 18px;list-style:disc;">';
+			foreach ( $recent_items as $item ) {
+				$title = get_the_title( $item );
+				if ( '' === trim( $title ) ) {
+					$title = __( '(Untitled testimonial)', 'frankies-headless-cms' );
+				}
+				echo '<li><a href="' . esc_url( get_edit_post_link( $item->ID, 'raw' ) ) . '">' . esc_html( $title ) . '</a></li>';
+			}
+			echo '</ul>';
+		}
+		echo '</div>';
 	}
 
 	private static function render_settings_group_card( $title, $description, $sections ) {
@@ -637,6 +689,7 @@ final class Frankies_Headless_CMS {
 			'frankies_headless_branding'          => __( 'Branding', 'frankies-headless-cms' ),
 			'frankies_headless_home_hero'         => __( 'Homepage Hero', 'frankies-headless-cms' ),
 			'frankies_headless_home_menu'         => __( 'Buttons And Footer', 'frankies-headless-cms' ),
+			'frankies_headless_home_table_talk'   => __( 'Table Talk', 'frankies-headless-cms' ),
 			'frankies_headless_home_images'       => __( 'Homepage Images', 'frankies-headless-cms' ),
 			'frankies_headless_about'             => __( 'About Page', 'frankies-headless-cms' ),
 			'frankies_headless_locations_page'    => __( 'Locations Page', 'frankies-headless-cms' ),
@@ -679,6 +732,12 @@ final class Frankies_Headless_CMS {
 							'skull_image',
 							'gallery_images',
 						),
+					),
+					array(
+						'label'           => __( 'Table Talk', 'frankies-headless-cms' ),
+						'description'     => __( 'Manage the testimonials shown in the home page Table Talk section.', 'frankies-headless-cms' ),
+						'fields'          => array(),
+						'render_callback' => 'render_home_table_talk_section',
 					),
 				),
 				'markup_field' => 'home_main_markup',
