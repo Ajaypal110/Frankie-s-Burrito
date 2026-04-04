@@ -821,9 +821,11 @@ final class Frankies_Headless_CMS {
 						),
 					),
 					array(
-						'label'  => __( 'Agoura Hills Location Image', 'frankies-headless-cms' ),
+						'label'  => __( 'Agoura Hills Location Images', 'frankies-headless-cms' ),
 						'fields' => array(
 							'mimo_hero_image',
+							'mimo_gallery_images',
+							'mimo_bottom_image',
 						),
 					),
 				),
@@ -854,6 +856,40 @@ final class Frankies_Headless_CMS {
 		);
 	}
 
+	private static function agoura_menu_content_field_keys() {
+		return array(
+			'menu_page_title',
+			'agoura_menu_location_line',
+			'agoura_menu_market_note',
+			'agoura_menu_oysters_title',
+			'agoura_menu_oysters_half_price',
+			'agoura_menu_oysters_dozen_price',
+			'agoura_menu_featured_primary_title',
+			'agoura_menu_featured_primary_copy',
+			'agoura_menu_featured_secondary_title',
+			'agoura_menu_featured_secondary_copy',
+			'agoura_menu_happy_hour_title',
+			'agoura_menu_happy_hour_subtitle',
+			'agoura_menu_beverages_title',
+			'agoura_menu_specials_price_line',
+			'agoura_menu_horchata_label',
+			'agoura_menu_horchata_price',
+			'agoura_menu_desserts_title',
+		);
+	}
+
+	private static function agoura_menu_section_builder_keys() {
+		return array(
+			'agoura_menu_appetizers',
+			'agoura_menu_happy_hour_items',
+			'agoura_menu_beverages',
+			'agoura_menu_tacos',
+			'agoura_menu_specialties',
+			'agoura_menu_burritos',
+			'agoura_menu_desserts',
+		);
+	}
+
 	private static function agoura_menu_page_field_groups() {
 		return array(
 			array(
@@ -862,13 +898,14 @@ final class Frankies_Headless_CMS {
 				'fields'      => self::agoura_menu_image_field_keys(),
 			),
 			array(
-			'label'       => __( 'Agoura Hills Menu Sections', 'frankies-headless-cms' ),
-			'description' => __( 'Structured menu sections for the Agoura Hills menu page.', 'frankies-headless-cms' ),
-			'fields'      => array(
-				'menu_page_title',
-				'menu_page_brand',
-				'miami_menu_sections',
+				'label'       => __( 'Agoura Hills Menu Text', 'frankies-headless-cms' ),
+				'description' => __( 'Editable fixed text used by the real Agoura Hills menu HTML.', 'frankies-headless-cms' ),
+				'fields'      => self::agoura_menu_content_field_keys(),
 			),
+			array(
+				'label'       => __( 'Agoura Hills Menu Sections', 'frankies-headless-cms' ),
+				'description' => __( 'Structured menu sections for the real Agoura Hills menu layout.', 'frankies-headless-cms' ),
+				'fields'      => self::agoura_menu_section_builder_keys(),
 			),
 		);
 	}
@@ -1163,6 +1200,7 @@ final class Frankies_Headless_CMS {
 				$settings,
 				array(
 					'gallery_images' => self::explode_lines( $settings['gallery_images'] ),
+					'mimo_gallery_images' => self::explode_lines( $settings['mimo_gallery_images'] ?? '' ),
 					'agoura_menu_images' => array_values(
 						array_filter(
 							array_map(
@@ -1178,6 +1216,13 @@ final class Frankies_Headless_CMS {
 						)
 					),
 					'miami_menu_sections' => self::decode_menu_sections( $settings['miami_menu_sections'] ?? '[]' ),
+					'agoura_menu_appetizers' => self::decode_menu_sections( $settings['agoura_menu_appetizers'] ?? '[]' ),
+					'agoura_menu_happy_hour_items' => self::decode_menu_sections( $settings['agoura_menu_happy_hour_items'] ?? '[]' ),
+					'agoura_menu_beverages' => self::decode_menu_sections( $settings['agoura_menu_beverages'] ?? '[]' ),
+					'agoura_menu_tacos' => self::decode_menu_sections( $settings['agoura_menu_tacos'] ?? '[]' ),
+					'agoura_menu_specialties' => self::decode_menu_sections( $settings['agoura_menu_specialties'] ?? '[]' ),
+					'agoura_menu_burritos' => self::decode_menu_sections( $settings['agoura_menu_burritos'] ?? '[]' ),
+					'agoura_menu_desserts' => self::decode_menu_sections( $settings['agoura_menu_desserts'] ?? '[]' ),
 					'nav_items'      => array(
 						array( 'label' => 'HOME', 'slug' => '/' ),
 						array( 'label' => 'ABOUT', 'slug' => '/about' ),
@@ -2151,11 +2196,36 @@ JS;
 			'mimo_intro_copy'      => array( 'label' => 'Agoura Hills intro copy', 'type' => 'textarea', 'rows' => 4, 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Intro copy shown above the Agoura Hills menu button.' ),
 			'mimo_happy_hour_copy' => array( 'label' => 'Agoura Hills happy hour copy', 'type' => 'textarea', 'rows' => 3, 'section' => 'frankies_headless_menu_page_content', 'placeholder' => "Monday-Friday\n4pm-7pm" ),
 			'mimo_hero_image'      => array( 'label' => 'Agoura Hills hero image', 'type' => 'media', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'https://...', 'preview' => true ),
+			'mimo_gallery_images'  => array( 'label' => 'Agoura Hills slider gallery images', 'type' => 'gallery', 'rows' => 7, 'help' => 'Upload or select multiple images for the lower gallery slider, then drag them into order.', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => "https://...\nhttps://...\nhttps://..." ),
+			'mimo_bottom_image'    => array( 'label' => 'Agoura Hills bottom hero image', 'type' => 'media', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'https://...', 'preview' => true ),
 			'hours_heading'        => array( 'label' => 'Hours and location heading', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'HOURS & LOCATION' ),
 			'happy_hour_heading'   => array( 'label' => 'Happy hour heading', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'HAPPY HOUR' ),
 			'menu_page_title'      => array( 'label' => 'Menu page title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'MENU' ),
 			'menu_page_brand'      => array( 'label' => 'Menu page brand title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'UPTOWN 66' ),
 			'miami_menu_sections'  => array( 'label' => 'Agoura Hills menu sections', 'type' => 'menu_builder', 'section' => 'frankies_headless_menu_page_content' ),
+			'agoura_menu_location_line' => array( 'label' => 'Agoura menu location line', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Agoura Hills • 6600 Biscayne Blvd, Agoura Hills, CA' ),
+			'agoura_menu_market_note' => array( 'label' => 'Agoura menu market note', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => '*Prices subject to change based on market.' ),
+			'agoura_menu_oysters_title' => array( 'label' => 'Agoura oysters title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Oysters' ),
+			'agoura_menu_oysters_half_price' => array( 'label' => 'Agoura oysters half dozen line', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => '1/2.......20' ),
+			'agoura_menu_oysters_dozen_price' => array( 'label' => 'Agoura oysters dozen line', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'DOZEN.....39' ),
+			'agoura_menu_featured_primary_title' => array( 'label' => 'Agoura featured item 1 title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'CRISPY CALAMARI' ),
+			'agoura_menu_featured_primary_copy' => array( 'label' => 'Agoura featured item 1 copy', 'type' => 'textarea', 'rows' => 3, 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Horseradish Crema, Pickled Onion, Pickled Jalapeños 17' ),
+			'agoura_menu_featured_secondary_title' => array( 'label' => 'Agoura featured item 2 title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'FRIED PINEAPPLE' ),
+			'agoura_menu_featured_secondary_copy' => array( 'label' => 'Agoura featured item 2 copy', 'type' => 'textarea', 'rows' => 3, 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Sofrito Butter Sauce, Horseradish, Crema, Lemon 17' ),
+			'agoura_menu_happy_hour_title' => array( 'label' => 'Agoura happy hour title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'HAPPY HOUR' ),
+			'agoura_menu_happy_hour_subtitle' => array( 'label' => 'Agoura happy hour subtitle', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'MONDAY-FRIDAY 4-7PM' ),
+			'agoura_menu_beverages_title' => array( 'label' => 'Agoura beverages title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Beverages' ),
+			'agoura_menu_specials_price_line' => array( 'label' => 'Agoura specialties price line', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => '2 PER ORDER..........13' ),
+			'agoura_menu_horchata_label' => array( 'label' => 'Agoura horchata label', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'HOMEMADE' ),
+			'agoura_menu_horchata_price' => array( 'label' => 'Agoura horchata price', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => '6' ),
+			'agoura_menu_desserts_title' => array( 'label' => 'Agoura desserts title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Dulces' ),
+			'agoura_menu_appetizers' => array( 'label' => 'Agoura appetizers', 'type' => 'menu_builder', 'section' => 'frankies_headless_menu_page_content' ),
+			'agoura_menu_happy_hour_items' => array( 'label' => 'Agoura happy hour items', 'type' => 'menu_builder', 'section' => 'frankies_headless_menu_page_content' ),
+			'agoura_menu_beverages' => array( 'label' => 'Agoura beverages', 'type' => 'menu_builder', 'section' => 'frankies_headless_menu_page_content' ),
+			'agoura_menu_tacos' => array( 'label' => 'Agoura tacos', 'type' => 'menu_builder', 'section' => 'frankies_headless_menu_page_content' ),
+			'agoura_menu_specialties' => array( 'label' => 'Agoura specialties', 'type' => 'menu_builder', 'section' => 'frankies_headless_menu_page_content' ),
+			'agoura_menu_burritos' => array( 'label' => 'Agoura burritos', 'type' => 'menu_builder', 'section' => 'frankies_headless_menu_page_content' ),
+			'agoura_menu_desserts' => array( 'label' => 'Agoura desserts', 'type' => 'menu_builder', 'section' => 'frankies_headless_menu_page_content' ),
 			'home_main_markup'     => array( 'label' => 'Home page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the Home page main area.', 'section' => 'frankies_headless_menus' ),
 			'about_main_markup'    => array( 'label' => 'About page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the About page main area.', 'section' => 'frankies_headless_menus' ),
 			'locations_main_markup' => array( 'label' => 'Locations page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the Locations page main area.', 'section' => 'frankies_headless_menus' ),
@@ -2268,10 +2338,39 @@ JS;
 			'mimo_intro_copy'      => 'Uptown 66 now calls Agoura Hills home, serving award-winning tacos with the same unmistakable street food soul. Nestled in the city with bold flavors and no shortcuts, it is the heartbeat of the brand. No frills, just fire.',
 			'mimo_happy_hour_copy' => "Monday-Friday\n4pm-7pm",
 			'mimo_hero_image'      => 'https://static.wixstatic.com/media/da4e2b_b41c698c3ac24a2ba3b44d624217c546~mv2.jpg/v1/fill/w_160,h_90,al_c,q_80,usm_0.66_1.00_0.01,blur_3,enc_avif,quality_auto/da4e2b_b41c698c3ac24a2ba3b44d624217c546_mv2.jpg',
+			'mimo_gallery_images'  => implode(
+				"\n",
+				array(
+					'https://static.wixstatic.com/media/da4e2b_87f50a7438a945aba77601042676fee0~mv2.jpg',
+					'https://static.wixstatic.com/media/da4e2b_3ca3ba6c3d0d41e9af4265cd02d64b51~mv2.jpg',
+					'https://static.wixstatic.com/media/da4e2b_fbd1414d275f4b5abff14224a5d6e7b2~mv2.jpg',
+					'https://static.wixstatic.com/media/da4e2b_94aeb82a461941a580b71c72d4deface~mv2.jpg',
+					'https://static.wixstatic.com/media/da4e2b_7ad8176b9ddc4685aa1201d83c57a74e~mv2.jpg',
+					'https://static.wixstatic.com/media/da4e2b_0b89ec107937406198c9b9fbe664e855~mv2.jpg',
+					'https://static.wixstatic.com/media/da4e2b_319468546c37457eaab02407bb2608dd~mv2.jpg',
+				)
+			),
+			'mimo_bottom_image'    => 'https://static.wixstatic.com/media/da4e2b_b99bae0e13e741b1952c05cdba8514bf_mv2.jpeg/v1/fill/w_147,h_97,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/MIA_105UPTOWN6600MIAPPP.jpg',
 			'hours_heading'        => 'HOURS & LOCATION',
 			'happy_hour_heading'   => 'HAPPY HOUR',
 			'menu_page_title'      => 'MENU',
 			'menu_page_brand'      => 'UPTOWN 66',
+			'agoura_menu_location_line' => 'Agoura Hills • 6600 Biscayne Blvd, Agoura Hills, CA',
+			'agoura_menu_market_note' => '*Prices subject to change based on market.',
+			'agoura_menu_oysters_title' => 'Oysters',
+			'agoura_menu_oysters_half_price' => '1/2.......20',
+			'agoura_menu_oysters_dozen_price' => 'DOZEN.....39',
+			'agoura_menu_featured_primary_title' => 'CRISPY CALAMARI',
+			'agoura_menu_featured_primary_copy' => 'Horseradish Crema, Pickled Onion, Pickled Jalapeños 17',
+			'agoura_menu_featured_secondary_title' => 'FRIED PINEAPPLE',
+			'agoura_menu_featured_secondary_copy' => 'Sofrito Butter Sauce, Horseradish, Crema, Lemon 17',
+			'agoura_menu_happy_hour_title' => 'HAPPY HOUR',
+			'agoura_menu_happy_hour_subtitle' => 'MONDAY-FRIDAY 4-7PM',
+			'agoura_menu_beverages_title' => 'Beverages',
+			'agoura_menu_specials_price_line' => '2 PER ORDER..........13',
+			'agoura_menu_horchata_label' => 'HOMEMADE',
+			'agoura_menu_horchata_price' => '6',
+			'agoura_menu_desserts_title' => 'Dulces',
 			'miami_menu_sections'  => wp_json_encode(
 				array(
 					array(
@@ -2296,6 +2395,194 @@ JS;
 								'name'        => 'Steak Burrito',
 								'price'       => '$15',
 								'description' => 'Rice, beans, salsa, crema, and grilled steak.',
+							),
+						),
+					),
+				)
+			),
+			'agoura_menu_appetizers' => wp_json_encode(
+				array(
+					array(
+						'title' => 'Appetizers',
+						'items' => array(
+							array(
+								'name'        => 'GUACAMOLE & CHIPS',
+								'price'       => '11',
+								'description' => 'Cilantro, Cotija, Lime',
+							),
+							array(
+								'name'        => 'CHIPS & SALSA',
+								'price'       => '7',
+								'description' => "Tomato, Chipotle, Lime,\nCilantro, Onion",
+							),
+							array(
+								'name'        => 'ELOTE',
+								'price'       => '7',
+								'description' => "Mexican Street Corn, Mayo,\nCotija, Cilantro, Lime",
+							),
+							array(
+								'name'        => 'UPTOWN NACHOS',
+								'price'       => 'Pollo 15 | Steak 17 | Shrimp 17',
+								'description' => 'Melted Queso Mixto, Roasted Corn, Pickled Jalapeño, Radish, Spring Onion',
+							),
+							array(
+								'name'        => 'CLASSIC CAESAR SALAD',
+								'price'       => 'Pollo 15 | Steak 17 | Shrimp 17',
+								'description' => "Baby Romaine, House Croutons,\nCotija, Egg",
+							),
+						),
+					),
+				)
+			),
+			'agoura_menu_happy_hour_items' => wp_json_encode(
+				array(
+					array(
+						'title' => 'Happy Hour',
+						'items' => array(
+							array(
+								'name'        => '$4 TACOS',
+								'price'       => '',
+								'description' => '',
+							),
+							array(
+								'name'        => '$5 CHIPS & SALSA',
+								'price'       => '',
+								'description' => '',
+							),
+							array(
+								'name'        => '$1 OYSTERS',
+								'price'       => '',
+								'description' => '(1/2 DOZEN.....DOZEN)',
+							),
+						),
+					),
+				)
+			),
+			'agoura_menu_beverages' => wp_json_encode(
+				array(
+					array(
+						'title' => 'Beverages',
+						'items' => array(
+							array(
+								'name'        => 'MEXICAN COKE',
+								'price'       => '3.75',
+								'description' => '',
+							),
+							array(
+								'name'        => 'DIET COKE',
+								'price'       => '3.75',
+								'description' => '',
+							),
+							array(
+								'name'        => 'JARRITOS',
+								'price'       => '3.75',
+								'description' => "Tamarind\nPineapple",
+							),
+							array(
+								'name'        => 'TOPO CHICO',
+								'price'       => '3.75',
+								'description' => '',
+							),
+							array(
+								'name'        => 'WATER',
+								'price'       => '2',
+								'description' => '',
+							),
+						),
+					),
+				)
+			),
+			'agoura_menu_tacos' => wp_json_encode(
+				array(
+					array(
+						'title' => 'Tacos',
+						'items' => array(
+							array(
+								'name'        => 'POLLO ASADO',
+								'price'       => '5',
+								'description' => 'Chicken, Crema, Cotija, Pickled Carrots',
+							),
+							array(
+								'name'        => 'HONGOS',
+								'price'       => '6',
+								'description' => 'Wild Mushrooms Guiso, Caramelized Pear, Red Onion',
+							),
+							array(
+								'name'        => 'BARBACOA',
+								'price'       => '6',
+								'description' => 'Oxtail, Beef Cheek, Short Rib, Pickled Onion',
+							),
+							array(
+								'name'        => 'AL PASTOR',
+								'price'       => '5',
+								'description' => 'Pork Shoulder, Pineapple, Onion',
+							),
+						),
+					),
+				)
+			),
+			'agoura_menu_specialties' => wp_json_encode(
+				array(
+					array(
+						'title' => 'Specialties',
+						'items' => array(
+							array(
+								'name'        => 'FLAUTAS',
+								'price'       => '',
+								'description' => 'Braised Beef Queso Mixto, Consommé',
+							),
+							array(
+								'name'        => 'BIRRIA',
+								'price'       => '',
+								'description' => 'Pollo, Queso, Crema, Cilantro',
+							),
+						),
+					),
+				)
+			),
+			'agoura_menu_burritos' => wp_json_encode(
+				array(
+					array(
+						'title' => 'Burritos',
+						'items' => array(
+							array(
+								'name'        => 'STEAK BURRITO',
+								'price'       => '15',
+								'description' => "Crispy Potatoes, Queso Mixto, Chipotle Crema, Pico,\nGuacamole",
+							),
+							array(
+								'name'        => 'CHICKEN BURRITO',
+								'price'       => '15',
+								'description' => 'Crispy Potatoes, Queso Mixto, Chipotle Crema, Pico, Guacamole',
+							),
+							array(
+								'name'        => 'SHRIMP BURRITO',
+								'price'       => '16',
+								'description' => 'Red Rice, Cilantro Crema, Pico, Guacamole',
+							),
+						),
+					),
+				)
+			),
+			'agoura_menu_desserts' => wp_json_encode(
+				array(
+					array(
+						'title' => 'Desserts',
+						'items' => array(
+							array(
+								'name'        => 'CHURROS',
+								'price'       => '8',
+								'description' => "Chocolate\nGanache",
+							),
+							array(
+								'name'        => 'TRES LECHES',
+								'price'       => '7',
+								'description' => 'Chantilly, Chocolate Pearls',
+							),
+							array(
+								'name'        => 'VANILLA BEAN FLAN',
+								'price'       => '7',
+								'description' => 'Carmelo',
 							),
 						),
 					),

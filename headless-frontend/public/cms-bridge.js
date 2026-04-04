@@ -164,6 +164,15 @@
     });
   }
 
+  function rewriteLegacyMenuLabels() {
+    document.querySelectorAll(".wixui-vertical-menu__item-label, [data-testid='linkElement']").forEach((node) => {
+      const text = (node.textContent || "").trim();
+      if (/^mimo$/i.test(text)) {
+        node.textContent = "Agoura Hills";
+      }
+    });
+  }
+
   function setInnerHtml(id, html) {
     const node = document.getElementById(id);
     if (node) {
@@ -180,6 +189,34 @@
     node.innerHTML = `<p data-testid="TextEffectsMatrix-container"><span class="RnSmmj YfwJR1 za31B4 HUb06w" data-testid="text-effects-shared-pattern-unit" data-text="${safe}"><span class="UsRQwP v7hKvY" data-testid="TextEffectsMatrix-text">${safe}</span></span></p>`;
   }
 
+  function fitAgouraHeroTitle(text) {
+    const node = document.getElementById("comp-mcjeiaz3");
+    if (!node) {
+      return;
+    }
+
+    const normalized = String(text || "").trim();
+    if (!normalized) {
+      return;
+    }
+
+    if (normalized.length >= 12) {
+      node.style.width = "32%";
+      node.style.maxWidth = "520px";
+      node.style.marginLeft = "auto";
+      node.style.marginRight = "auto";
+      node.style.setProperty("--letter-spacing", "-0.06em");
+      node.style.setProperty("--font", "normal normal 700 max(0.5px, 0.048 * (var(--scaling-factor) - var(--scrollbar-width)))/1.1em wix-madefor-display-v2,sans-serif");
+    } else {
+      node.style.width = "";
+      node.style.maxWidth = "";
+      node.style.marginLeft = "";
+      node.style.marginRight = "";
+      node.style.removeProperty("--letter-spacing");
+      node.style.removeProperty("--font");
+    }
+  }
+
   function setTextBlock(id, text, tagName, className) {
     if (!text) {
       return;
@@ -187,6 +224,21 @@
     setInnerHtml(
       id,
       `<${tagName} class="${className}"><span class="wixui-rich-text__text">${escapeHtml(text)}</span></${tagName}>`
+    );
+  }
+
+  function formatRichTextContent(text) {
+    return escapeHtml(String(text || "")).replace(/\r?\n/g, '<br class="wixui-rich-text__text">');
+  }
+
+  function setRichTextBlock(id, text, tagName = "h1", className = "font_2 wixui-rich-text__text") {
+    if (!text) {
+      return;
+    }
+
+    setInnerHtml(
+      id,
+      `<${tagName} class="${className}"><span class="wixui-rich-text__text">${formatRichTextContent(text)}</span></${tagName}>`
     );
   }
 
@@ -327,6 +379,28 @@
       if (wowImage && typeof wowImage.reLayout === "function") {
         requestAnimationFrame(() => wowImage.reLayout());
       }
+    }
+  }
+
+  function setMenuImage(id, src) {
+    if (!src) {
+      return;
+    }
+
+    setImage(id, src);
+
+    const root = document.getElementById(id);
+    if (!root) {
+      return;
+    }
+
+    forceVisible(root);
+    forceVisible(root.closest(".wixui-box"));
+
+    if (id === "comp-m2ujhnhk") {
+      root.style.transform = "translateY(100px)";
+      root.style.transformOrigin = "top center";
+      root.style.zIndex = "1";
     }
   }
 
@@ -711,6 +785,55 @@
     main.insertAdjacentHTML("beforeend", markup);
   }
 
+  function buildAgouraGalleryMarkup(images) {
+    const slides = (images || [])
+      .filter(Boolean)
+      .map(
+        (src, index) => `
+          <article style="flex:0 0 min(76vw, 360px);scroll-snap-align:center;">
+            <img
+              src="${escapeHtml(normalizeAssetUrl(src) || src)}"
+              alt="Agoura Hills gallery image ${index + 1}"
+              style="display:block;width:100%;height:420px;object-fit:cover;border-radius:20px;"
+            />
+          </article>
+        `
+      )
+      .join("");
+
+    if (!slides) {
+      return "";
+    }
+
+    return `
+      <section style="max-width:1200px;margin:0 auto;padding:24px 24px 40px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;">
+          <h2 style="margin:0;font-size:28px;letter-spacing:.08em;text-transform:uppercase;color:#2f160f;">Gallery</h2>
+          <p style="margin:0;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#7a6257;">Swipe or scroll</p>
+        </div>
+        <div style="display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;-webkit-overflow-scrolling:touch;">
+          ${slides}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderAgouraGallery(images) {
+    const galleryRoot = document.getElementById("comp-mad1tvzg");
+    const gallerySection = document.getElementById("comp-maclwrb2");
+    const markup = buildAgouraGalleryMarkup(images);
+
+    if (!galleryRoot || !gallerySection || !markup) {
+      return;
+    }
+
+    galleryRoot.innerHTML = markup;
+    forceVisible(galleryRoot, "block");
+    forceVisible(gallerySection, "flex");
+    galleryRoot.style.width = "100%";
+    galleryRoot.style.maxWidth = "100%";
+  }
+
   function setMobileMenuOpenState(menuRoot, isOpen) {
     if (!menuRoot) {
       return;
@@ -739,6 +862,70 @@
 
     body.classList.toggle("siteScrollingBlocked", isOpen);
     body.style.overflow = isOpen ? "hidden" : "";
+  }
+
+  function resolveMobileMenuHref(label, parentLabel) {
+    const normalizedLabel = String(label || "").trim().toLowerCase();
+    const normalizedParentLabel = String(parentLabel || "").trim().toLowerCase();
+
+    if (normalizedParentLabel === "locations") {
+      if (normalizedLabel === "mimo" || normalizedLabel === "agoura hills") {
+        return "/agoura-hills";
+      }
+    }
+
+    if (normalizedParentLabel === "menus") {
+      if (normalizedLabel === "mimo" || normalizedLabel === "agoura hills") {
+        return "/agoura-hillsmenu";
+      }
+    }
+
+    return "";
+  }
+
+  function bindMobileMenuVirtualLinks(menuRoot, closeMenu) {
+    if (!menuRoot) {
+      return;
+    }
+
+    menuRoot.querySelectorAll(".wixui-vertical-menu__submenu [data-testid='linkElement']").forEach((node) => {
+      if (!node || node.tagName === "A" || node.dataset.cmsLinkBound === "true") {
+        return;
+      }
+
+      const item = node.closest(".wixui-vertical-menu__item");
+      const submenu = item && item.closest(".wixui-vertical-menu__submenu");
+      const parentItem = submenu && submenu.closest(".wixui-vertical-menu__item");
+      const parentLabelNode =
+        parentItem &&
+        parentItem.querySelector(":scope > [data-testid='itemWrapper'] [data-testid='linkElement']");
+      const href = resolveMobileMenuHref(node.textContent, parentLabelNode && parentLabelNode.textContent);
+
+      if (!href) {
+        return;
+      }
+
+      node.setAttribute("data-cms-href", href);
+      node.setAttribute("role", "link");
+      node.tabIndex = 0;
+      node.style.cursor = "pointer";
+
+      const navigate = (event) => {
+        if (event) {
+          event.preventDefault();
+        }
+        closeMenu();
+        window.location.assign(href);
+      };
+
+      node.addEventListener("click", navigate);
+      node.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          navigate(event);
+        }
+      });
+      node.dataset.cmsLinkBound = "true";
+    });
   }
 
   function initMobileMenuFallback() {
@@ -808,6 +995,8 @@
         item.classList.toggle("hGjOas", !expanded);
       });
     });
+
+    bindMobileMenuVirtualLinks(menuRoot, closeMenu);
 
     menuRoot.querySelectorAll(".wixui-vertical-menu__item a[href]").forEach((anchor) => {
       anchor.addEventListener("click", () => {
@@ -1012,7 +1201,10 @@
     }
 
     setImage("comp-mackekk1", settings.mimo_hero_image || "");
-    setTextEffectsMatrix("comp-mcjeiaz3", settings.miami_label || (miami.city && /agoura hills|miami/i.test(miami.city) ? "Agoura Hills" : miami.name));
+    setImage("comp-mackdwkx14", settings.mimo_bottom_image || "");
+    const heroLabel = settings.miami_label || (miami.city && /agoura hills|miami/i.test(miami.city) ? "Agoura Hills" : miami.name);
+    setTextEffectsMatrix("comp-mcjeiaz3", heroLabel);
+    fitAgouraHeroTitle(heroLabel);
     setInnerHtml("comp-macl6c0o", toParagraphHtml(settings.mimo_intro_copy || miami.copy || settings.locations_copy));
     setAnchorHref("comp-mdp2taz6", "/agoura-hillsmenu", "_self");
     setButtonLabel("comp-mdp2taz6", settings.menu_primary_label || "MENU");
@@ -1021,6 +1213,7 @@
     setInnerHtml("comp-mcje52qw", toParagraphHtml(`${miami.address}, ${miami.city}`));
     setTextBlock("comp-mcjeaao8", settings.happy_hour_heading || "HAPPY HOUR", "p", "font_8 wixui-rich-text__text");
     setInnerHtml("comp-mcjeaanm", toParagraphHtml(settings.mimo_happy_hour_copy || "Monday-Friday\n4pm-7pm"));
+    renderAgouraGallery(settings.mimo_gallery_images || []);
   }
 
   function applyMiamiMenuPage(data) {
@@ -1070,7 +1263,7 @@
         break;
       case "/agoura-hillsmenu":
       case "/miamimenu":
-        applyMiamiMenuPage(data);
+        applyAgouraMenuHtmlPage(data);
         break;
       default:
         break;
@@ -1114,6 +1307,148 @@
     setInnerHtml("comp-lxwb87gt", toParagraphHtml(`${miami.name} • ${miami.address}, ${miami.city}`));
     setTextBlock("comp-lxweux6y1", miami.name, "h1", "font_2 wixui-rich-text__text");
     setTextBlock("comp-lxwbz4d4", settings.menu_page_brand || "UPTOWN 66", "h1", "font_2 wixui-rich-text__text");
+  }
+
+  function applyAgouraMenuHtmlPage(data) {
+    const settings = data.settings || {};
+    const locations = data.locations || [];
+    const miami = locations.find((item) => /agoura hills|miami|mimo/i.test(item.name || item.city || "")) || locations[0];
+    if (!miami) {
+      return;
+    }
+
+    const locationLine =
+      settings.agoura_menu_location_line || `${miami.name} • ${miami.address}, ${miami.city}`;
+    const menuImages = (settings.agoura_menu_images || []).length
+      ? settings.agoura_menu_images
+      : [
+          settings.agoura_menu_image_1,
+          settings.agoura_menu_image_2,
+          settings.agoura_menu_image_3,
+          settings.agoura_menu_image_4,
+          settings.agoura_menu_image_5,
+        ].filter(Boolean);
+
+    const readSectionItems = (sections) => ((sections || [])[0] && (sections || [])[0].items) || [];
+    const itemLine = (item) => {
+      if (!item) {
+        return "";
+      }
+
+      const parts = [item.description, item.price].filter(Boolean);
+      return parts.join(item.description && item.price ? "\n" : "");
+    };
+    const inlineItem = (item) => {
+      if (!item) {
+        return "";
+      }
+
+      return [item.name, item.price].filter(Boolean).join(" ");
+    };
+
+    const appetizers = readSectionItems(settings.agoura_menu_appetizers);
+    const happyHourItems = readSectionItems(settings.agoura_menu_happy_hour_items);
+    const beverages = readSectionItems(settings.agoura_menu_beverages);
+    const tacos = readSectionItems(settings.agoura_menu_tacos);
+    const specialties = readSectionItems(settings.agoura_menu_specialties);
+    const burritos = readSectionItems(settings.agoura_menu_burritos);
+    const desserts = readSectionItems(settings.agoura_menu_desserts);
+
+    setRichTextBlock("comp-lxwb31ei", settings.menu_page_title || "MENU");
+    setInnerHtml("comp-lxwb87gt", toParagraphHtml(locationLine));
+    setRichTextBlock("comp-lxweux6y1", settings.agoura_menu_oysters_title || "Oysters");
+    setRichTextBlock("comp-lxwb316u", settings.agoura_menu_oysters_half_price || "1/2.......20", "p", "font_8 wixui-rich-text__text");
+    setRichTextBlock("comp-lxwb6asu", settings.agoura_menu_oysters_dozen_price || "DOZEN.....39", "p", "font_8 wixui-rich-text__text");
+    setRichTextBlock("comp-lxwbd5a3", settings.agoura_menu_featured_primary_title || "CRISPY CALAMARI");
+    setRichTextBlock(
+      "comp-lxwbd56q",
+      settings.agoura_menu_featured_primary_copy || "Horseradish Crema, Pickled Onion, Pickled Jalapeños 17"
+    );
+    setRichTextBlock("comp-lxwbhjv3", settings.agoura_menu_featured_secondary_title || "FRIED PINEAPPLE");
+    setRichTextBlock(
+      "comp-lxwbhjqq",
+      settings.agoura_menu_featured_secondary_copy || "Sofrito Butter Sauce, Horseradish, Crema, Lemon 17"
+    );
+    setRichTextBlock(
+      "comp-lxwbz4d4",
+      settings.agoura_menu_market_note || "*Prices subject to change based on market."
+    );
+
+    setRichTextBlock("comp-m2uhm65r", settings.agoura_menu_happy_hour_title || "HAPPY HOUR");
+    setRichTextBlock("comp-m2uhoids", settings.agoura_menu_happy_hour_subtitle || "MONDAY-FRIDAY 4-7PM");
+    setRichTextBlock("comp-m2uhp22f", happyHourItems[0]?.name || "$4 TACOS");
+    setRichTextBlock("comp-m2uhqkwh", happyHourItems[1]?.name || "$5 CHIPS & SALSA");
+    setRichTextBlock("comp-m2uhr0io", happyHourItems[2]?.name || "$1 OYSTERS");
+    setRichTextBlock("comp-m2uhq0ry", happyHourItems[2]?.description || "(1/2 DOZEN.....DOZEN)");
+
+    const beveragesSection = document.getElementById("comp-lxwfenel");
+    if (beveragesSection) {
+      beveragesSection.style.transform = "translateY(36px)";
+      beveragesSection.style.transformOrigin = "top center";
+    }
+
+    setRichTextBlock("comp-lxwfenen3", settings.agoura_menu_beverages_title || "Beverages");
+    setRichTextBlock("comp-lxwfenep10", inlineItem(beverages[0]) || "MEXICAN COKE 3.75");
+    setRichTextBlock("comp-lxwfener", inlineItem(beverages[1]) || "DIET COKE 3.75");
+    setRichTextBlock("comp-lxwfenes5", inlineItem(beverages[2]) || "JARRITOS 3.75");
+    setRichTextBlock("comp-lxwfenes18", beverages[2]?.description || "Tamarind\nPineapple");
+    setRichTextBlock("comp-lxwfenet11", inlineItem(beverages[3]) || "TOPO CHICO 3.75");
+    setRichTextBlock("comp-lxwfhtbb", inlineItem(beverages[4]) || "WATER 2");
+
+    setRichTextBlock("comp-lxwc0cot", appetizers[0]?.name || "GUACAMOLE & CHIPS");
+    setRichTextBlock("comp-lxwc0c97", itemLine(appetizers[0]) || "Cilantro, Cotija, Lime\n11");
+    setRichTextBlock("comp-mdoy3tn7", appetizers[1]?.name || "CHIPS & SALSA");
+    setRichTextBlock("comp-mdoy3thq", itemLine(appetizers[1]) || "Tomato, Chipotle, Lime,\nCilantro, Onion\n7");
+    setRichTextBlock("comp-lxwc1scf", appetizers[2]?.name || "ELOTE");
+    setRichTextBlock("comp-lxwc1s51", itemLine(appetizers[2]) || "Mexican Street Corn, Mayo,\nCotija, Cilantro, Lime\n7");
+    setRichTextBlock("comp-lxwc362u", appetizers[3]?.name || "UPTOWN NACHOS");
+    setRichTextBlock(
+      "comp-lxwc35mi",
+      appetizers[3]?.description || "Melted Queso Mixto, Roasted Corn, Pickled Jalapeño, Radish, Spring Onion"
+    );
+    setRichTextBlock("comp-lxwc6yjd", appetizers[3]?.price || "Pollo 15 | Steak 17 | Shrimp 17");
+    setRichTextBlock("comp-lxwc8me7", appetizers[4]?.name || "CLASSIC CAESAR SALAD");
+    setRichTextBlock("comp-lxwc8m07", appetizers[4]?.description || "Baby Romaine, House Croutons,\nCotija, Egg");
+    setRichTextBlock("comp-lxwc8lna", appetizers[4]?.price || "Pollo 15 | Steak 17 | Shrimp 17");
+
+    setRichTextBlock("comp-lxwcokch", tacos[0]?.name || "POLLO ASADO");
+    setRichTextBlock("comp-lxwcokv9", itemLine(tacos[0]) || "Chicken, Crema, Cotija, Pickled Carrots\n5");
+    setRichTextBlock("comp-lxwd1lj7", tacos[1]?.name || "HONGOS");
+    setRichTextBlock("comp-lxwd1l3c", itemLine(tacos[1]) || "Wild Mushrooms Guiso, Caramelized Pear, Red Onion\n6");
+    setRichTextBlock("comp-lxwcr9as", tacos[2]?.name || "BARBACOA");
+    setRichTextBlock("comp-lxwcw03g", itemLine(tacos[2]) || "Oxtail, Beef Cheek, Short Rib, Pickled Onion\n6");
+    setRichTextBlock("comp-lxwd4kr4", tacos[3]?.name || "AL PASTOR");
+    setRichTextBlock("comp-lxwd4ke8", itemLine(tacos[3]) || "Pork Shoulder, Pineapple, Onion\n5");
+
+    setRichTextBlock("comp-lxwdbarn", settings.agoura_menu_specials_price_line || "2 PER ORDER..........13");
+    setRichTextBlock("comp-lxwd7s8m", specialties[0]?.name || "FLAUTAS");
+    setRichTextBlock("comp-lxwd7t3u", itemLine(specialties[0]) || "Braised Beef Queso Mixto, Consommé");
+    setRichTextBlock("comp-lxwd7sny", specialties[1]?.name || "BIRRIA");
+    setRichTextBlock("comp-lxwd7rpr", itemLine(specialties[1]) || "Pollo, Queso, Crema, Cilantro");
+
+    setRichTextBlock("comp-lxwdhgm5", burritos[0]?.name || "STEAK BURRITO");
+    setRichTextBlock("comp-lxwdhgs2", itemLine(burritos[0]) || "Crispy Potatoes, Queso Mixto, Chipotle Crema, Pico,\nGuacamole\n15");
+    setRichTextBlock("comp-lxwdjk9z", burritos[1]?.name || "CHICKEN BURRITO");
+    setRichTextBlock("comp-lxwdjk51", itemLine(burritos[1]) || "Crispy Potatoes, Queso Mixto, Chipotle Crema, Pico, Guacamole\n15");
+    setRichTextBlock("comp-m1gnvxlc", burritos[2]?.name || "SHRIMP BURRITO");
+    setRichTextBlock("comp-m1gnvxiz", itemLine(burritos[2]) || "Red Rice, Cilantro Crema, Pico, Guacamole\n16");
+
+    setRichTextBlock("comp-lxwfb3bd", settings.agoura_menu_horchata_label || "HOMEMADE");
+    setRichTextBlock("comp-lxwfcxhy", settings.agoura_menu_horchata_price || "6");
+
+    setRichTextBlock("comp-lxwezuc2", settings.agoura_menu_desserts_title || "Dulces");
+    setRichTextBlock("comp-lxwdwmlc5", desserts[0]?.name || "CHURROS");
+    setRichTextBlock("comp-lxwdwmld6", itemLine(desserts[0]) || "Chocolate\nGanache\n8");
+    setRichTextBlock("comp-lxwdwmlg4", desserts[1]?.name || "TRES LECHES");
+    setRichTextBlock("comp-lxwdwmlg17", itemLine(desserts[1]) || "Chantilly, Chocolate Pearls\n7");
+    setRichTextBlock("comp-lxwdwmle5", desserts[2]?.name || "VANILLA BEAN FLAN");
+    setRichTextBlock("comp-lxwdwmle18", itemLine(desserts[2]) || "Carmelo\n7");
+
+    setMenuImage("comp-lx9h59lt", menuImages[0]);
+    setMenuImage("comp-lxwbbbn0", menuImages[1]);
+    setMenuImage("comp-lxwdg80k", menuImages[2]);
+    setMenuImage("comp-lxwfa3qt", menuImages[3]);
+    setMenuImage("comp-m2ujhnhk", menuImages[4]);
   }
 
   function clearPendingState() {
@@ -1185,6 +1520,7 @@
     window.__FRANKIES_CMS_DATA__ = data;
     applyPageContent(data);
     rewriteInternalLinks();
+    rewriteLegacyMenuLabels();
     normalizeDocumentAssetUrls();
     initMobileMenuFallback();
     clearPendingStateWhenReady();
