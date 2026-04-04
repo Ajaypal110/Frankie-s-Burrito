@@ -1108,10 +1108,12 @@ final class Frankies_Headless_CMS {
 
 	public static function sanitize_settings( $input ) {
 		$defaults  = self::default_settings();
+		$current   = wp_parse_args( get_option( self::OPTION_KEY, array() ), $defaults );
 		$sanitized = array();
+		$input     = is_array( $input ) ? $input : array();
 
 		foreach ( self::settings_fields() as $key => $field ) {
-			$value = $input[ $key ] ?? $defaults[ $key ];
+			$value = array_key_exists( $key, $input ) ? $input[ $key ] : ( $current[ $key ] ?? $defaults[ $key ] );
 			if ( ! empty( $field['raw'] ) ) {
 				$sanitized[ $key ] = trim( wp_unslash( $value ) );
 			} elseif ( 'gallery' === $field['type'] ) {
