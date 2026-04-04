@@ -1,0 +1,2 @@
+Frankies frontend running at http://localhost:3000
+Proxying WordPress API from http://localhost:8883/wp-json/frankies-headless/v1/site
