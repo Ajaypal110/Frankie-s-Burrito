@@ -8,10 +8,11 @@
     "about.html": "/about",
     "locations.html": "/locations",
     "press.html": "/press",
-    "mimo.html": "/mimo",
-    "miamimenu.html": "/miamimenu",
-    "hallandale.html": "/hallandale",
-    "hallandalemenu.html": "/hallandalemenu",
+    "agoura-hills.html": "/agoura-hills",
+    "agoura-hillsmenu.html": "/agoura-hillsmenu",
+    "agoura.html": "/agoura-hills",
+    "mimo.html": "/agoura-hills",
+    "miamimenu.html": "/agoura-hillsmenu",
   };
   const HOME_SKULL_IDS = ["comp-lz8p89zm", "comp-lz8psxby", "comp-lz8pt0qw", "comp-lz8pt7jf"];
   const HOME_TESTIMONIAL_IDS = [
@@ -213,13 +214,60 @@
 
   function setAnchorHref(id, href, target) {
     const root = document.getElementById(id);
-    const anchor = root && root.querySelector("a");
-    if (anchor && href) {
-      anchor.href = href;
-      if (target) {
-        anchor.target = target;
-      }
+    if (!root || !href) {
+      return;
     }
+
+    const linkNode = root.matches("a, [data-testid='linkElement']")
+      ? root
+      : root.querySelector("a, [data-testid='linkElement']");
+
+    if (!linkNode) {
+      return;
+    }
+
+    if (linkNode.tagName === "A") {
+      linkNode.href = href;
+      if (target) {
+        linkNode.target = target;
+      }
+      return;
+    }
+
+    linkNode.setAttribute("data-cms-href", href);
+    linkNode.setAttribute("role", "link");
+    if (target) {
+      linkNode.setAttribute("data-cms-target", target);
+    }
+    if (!linkNode.hasAttribute("tabindex")) {
+      linkNode.tabIndex = 0;
+    }
+
+    if (linkNode.dataset.cmsLinkBound === "true") {
+      return;
+    }
+
+    const navigate = () => {
+      const nextHref = linkNode.getAttribute("data-cms-href");
+      const nextTarget = linkNode.getAttribute("data-cms-target");
+      if (!nextHref) {
+        return;
+      }
+      if (nextTarget && nextTarget !== "_self") {
+        window.open(nextHref, nextTarget, "noopener");
+        return;
+      }
+      window.location.assign(nextHref);
+    };
+
+    linkNode.addEventListener("click", navigate);
+    linkNode.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        navigate();
+      }
+    });
+    linkNode.dataset.cmsLinkBound = "true";
   }
 
   function forceVisible(node, display = "block") {
@@ -232,6 +280,17 @@
     node.style.display = display;
     node.style.visibility = "visible";
     node.style.opacity = "1";
+  }
+
+  function hideNodeById(id) {
+    const node = document.getElementById(id);
+    if (!node) {
+      return;
+    }
+
+    node.style.display = "none";
+    node.style.visibility = "hidden";
+    node.style.opacity = "0";
   }
 
   function setButtonLabel(id, label) {
@@ -431,6 +490,57 @@
     return `<section style="max-width:980px;margin:0 auto;padding:48px 24px 72px;color:#2f160f;"><p style="margin:0 0 12px;font-size:14px;letter-spacing:.22em;text-transform:uppercase;">${escapeHtml(brandTitle || "")}</p><h1 style="margin:0;font-size:52px;line-height:1;letter-spacing:.08em;text-transform:uppercase;">${escapeHtml(pageTitle || "")}</h1><p style="margin:16px 0 0;font-size:16px;line-height:1.7;color:#5c4b43;">${escapeHtml(locationLine || "")}</p>${sectionHtml}</section>`;
   }
 
+  function buildAgouraMenuPageMarkup(pageTitle, brandTitle, locationLine, images, sections) {
+    const imageMarkup = (images || [])
+      .filter(Boolean)
+      .map(
+        (src, index) =>
+          `<figure style="margin:0;"><img src="${escapeHtml(
+            normalizeAssetUrl(src) || src
+          )}" alt="Agoura Hills menu image ${index + 1}" style="display:block;width:100%;height:100%;min-height:220px;object-fit:cover;border-radius:18px;"></figure>`
+      )
+      .join("");
+
+    const galleryMarkup = imageMarkup
+      ? `<section style="margin-top:32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">${imageMarkup}</section>`
+      : "";
+
+    const sectionHtml = (sections || [])
+      .map((section) => {
+        const itemsHtml = (section.items || [])
+          .map((item) => {
+            const price = item.price
+              ? `<span style="font-weight:700;white-space:nowrap;">${escapeHtml(item.price)}</span>`
+              : "";
+            const description = item.description
+              ? `<p style="margin:6px 0 0;color:#5c4b43;line-height:1.6;">${escapeHtml(item.description)}</p>`
+              : "";
+
+            return `<article style="padding:14px 0;border-top:1px solid rgba(60,32,19,.12);"><div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;"><h3 style="margin:0;font-size:20px;letter-spacing:.04em;text-transform:uppercase;">${escapeHtml(
+              item.name || ""
+            )}</h3>${price}</div>${description}</article>`;
+          })
+          .join("");
+
+        if (!itemsHtml) {
+          return "";
+        }
+
+        return `<section style="margin-top:32px;"><h2 style="margin:0 0 12px;font-size:28px;letter-spacing:.06em;text-transform:uppercase;">${escapeHtml(
+          section.title || ""
+        )}</h2>${itemsHtml}</section>`;
+      })
+      .join("");
+
+    return `<section style="max-width:1080px;margin:0 auto;padding:48px 24px 72px;color:#2f160f;"><p style="margin:0 0 12px;font-size:14px;letter-spacing:.22em;text-transform:uppercase;">${escapeHtml(
+      brandTitle || ""
+    )}</p><h1 style="margin:0;font-size:52px;line-height:1;letter-spacing:.08em;text-transform:uppercase;">${escapeHtml(
+      pageTitle || ""
+    )}</h1><p style="margin:16px 0 0;font-size:16px;line-height:1.7;color:#5c4b43;">${escapeHtml(
+      locationLine || ""
+    )}</p>${galleryMarkup}${sectionHtml}</section>`;
+  }
+
   function rewriteInternalLinks() {
     document.querySelectorAll("a[href]").forEach((anchor) => {
       const href = anchor.getAttribute("href");
@@ -447,6 +557,20 @@
     });
 
     normalizeDocumentAssetUrls();
+  }
+
+  function pruneHallandaleNavigation() {
+    document.querySelectorAll(".wixui-vertical-menu__item, [data-testid='itemWrapper']").forEach((node) => {
+      const text = (node.textContent || "").trim().toLowerCase();
+      const link = node.querySelector("a[href]");
+      const href = (link && link.getAttribute("href")) || "";
+
+      if (text === "hallandale" || href.includes("hallandale")) {
+        node.style.display = "none";
+        node.style.visibility = "hidden";
+        node.style.opacity = "0";
+      }
+    });
   }
 
   function applyRawMainMarkup(markup) {
@@ -725,6 +849,7 @@
 
     enforceLogoOverride();
     scheduleLogoEnforcement();
+    pruneHallandaleNavigation();
   }
 
   function applyHomePage(data) {
@@ -741,7 +866,7 @@
     setInnerHtml("comp-ljgxgzui", toParagraphHtml(settings.secret_sauce_copy));
 
     setAnchorHref("comp-ljgxh07h", settings.menu_primary_url, "_self");
-    setAnchorHref("comp-mdp32mhg1", settings.menu_secondary_url, "_self");
+    hideNodeById("comp-mdp32mhg1");
     setImage("comp-lx95a8rh", settings.hero_left_image);
     setImage("comp-lx9904sy", settings.hero_center_image);
     setImage("comp-lz8sc600", settings.hero_right_image);
@@ -804,8 +929,7 @@
     const settings = data.settings || {};
     applyRawMainMarkup(settings.locations_main_markup);
     const locations = data.locations || [];
-    const miami = locations.find((item) => /miami|mimo/i.test(item.name || item.city || "")) || locations[0];
-    const hallandale = locations.find((item) => /hallandale/i.test(item.name || item.city || "")) || locations[1];
+    const miami = locations.find((item) => /agoura hills|miami|mimo/i.test(item.name || item.city || "")) || locations[0];
 
     setTextBlock("comp-mcjd4ms58__item1", settings.locations_title || "Locations", "h3", "font_3 wixui-rich-text__text");
     setImage("comp-mcjd4mru__item1", settings.locations_intro_image || "");
@@ -813,48 +937,34 @@
     if (miami) {
       setLinkTextBlock(
         "comp-mcjd4ms58__item-j9ples3e",
-        settings.miami_label || (miami.city && /miami/i.test(miami.city) ? "Miami" : miami.name),
-        "/mimo",
+        settings.miami_label || (miami.city && /agoura hills|miami/i.test(miami.city) ? "Agoura Hills" : miami.name),
+        "/agoura-hills",
         "h3",
         "font_3 wixui-rich-text__text"
       );
       setInnerHtml(
         "comp-mcjd4msb__item-j9ples3e",
         [
-          `<p class="font_8 wixui-rich-text__text"><a href="/mimo" target="_self" class="wixui-rich-text__text"><span style="font-weight:bold;" class="wixui-rich-text__text">${escapeHtml(
+          `<p class="font_8 wixui-rich-text__text"><a href="/agoura-hills" target="_self" class="wixui-rich-text__text"><span style="font-weight:bold;" class="wixui-rich-text__text">${escapeHtml(
             miami.name
           )}</span></a></p>`,
-          `<p class="font_8 wixui-rich-text__text" style="font-size:13px;"><a href="/mimo" target="_self" class="wixui-rich-text__text"><span style="font-size:13px;" class="wixui-rich-text__text">${escapeHtml(
+          `<p class="font_8 wixui-rich-text__text" style="font-size:13px;"><a href="/agoura-hills" target="_self" class="wixui-rich-text__text"><span style="font-size:13px;" class="wixui-rich-text__text">${escapeHtml(
             `${miami.address}, ${miami.city}`
           )}</span></a></p>`,
         ].join("")
       );
-      setAnchorHref("comp-mcjd4mru__item-j9ples3e", "/mimo", "_self");
+      setAnchorHref("comp-mcjd4mru__item-j9ples3e", "/agoura-hills", "_self");
+      setAnchorHref("comp-mddniarv__item-j9ples3e", "/agoura-hills", "_self");
       setImage("comp-mcjd4mru__item-j9ples3e", settings.locations_miami_image || miami.featured_image || "");
     }
 
-    if (hallandale) {
-      setLinkTextBlock(
-        "comp-mcjd4ms58__item-j9plerjk",
-        settings.hallandale_label || hallandale.name,
-        "/hallandale",
-        "h3",
-        "font_3 wixui-rich-text__text"
-      );
-      setInnerHtml(
-        "comp-mcjd4msb__item-j9plerjk",
-        [
-          `<p class="font_8 wixui-rich-text__text"><a href="/hallandale" target="_self" class="wixui-rich-text__text"><span style="font-weight:bold;" class="wixui-rich-text__text">${escapeHtml(
-            settings.hallandale_subtitle || "Atlantic Village"
-          )}</span></a></p>`,
-          `<p class="font_8 wixui-rich-text__text" style="font-size:13px;"><a href="/hallandale" target="_self" class="wixui-rich-text__text"><span style="font-size:13px;" class="wixui-rich-text__text">${escapeHtml(
-            `${hallandale.address}, ${hallandale.city}`
-          )}</span></a></p>`,
-        ].join("")
-      );
-      setAnchorHref("comp-mcjd4mru__item-j9plerjk", "/hallandale", "_self");
-      setImage("comp-mcjd4mru__item-j9plerjk", settings.locations_hallandale_image || hallandale.featured_image || "");
-    }
+    [
+      "comp-mcjd4mrn__item-j9plerjk",
+      "comp-mddniarv__item-j9plerjk",
+      "comp-mcjd4ms58__item-j9plerjk",
+      "comp-mcjd4msb__item-j9plerjk",
+      "comp-mcjd4mru__item-j9plerjk",
+    ].forEach(hideNodeById);
   }
 
   function applyPressPage(data) {
@@ -896,15 +1006,15 @@
     const settings = data.settings || {};
     applyRawMainMarkup(settings.mimo_main_markup);
     const locations = data.locations || [];
-    const miami = locations.find((item) => /miami|mimo/i.test(item.name || item.city || "")) || locations[0];
+    const miami = locations.find((item) => /agoura hills|miami|mimo/i.test(item.name || item.city || "")) || locations[0];
     if (!miami) {
       return;
     }
 
     setImage("comp-mackekk1", settings.mimo_hero_image || "");
-    setTextEffectsMatrix("comp-mcjeiaz3", settings.miami_label || (miami.city && /miami/i.test(miami.city) ? "Miami" : miami.name));
+    setTextEffectsMatrix("comp-mcjeiaz3", settings.miami_label || (miami.city && /agoura hills|miami/i.test(miami.city) ? "Agoura Hills" : miami.name));
     setInnerHtml("comp-macl6c0o", toParagraphHtml(settings.mimo_intro_copy || miami.copy || settings.locations_copy));
-    setAnchorHref("comp-mdp2taz6", "/miamimenu", "_self");
+    setAnchorHref("comp-mdp2taz6", "/agoura-hillsmenu", "_self");
     setButtonLabel("comp-mdp2taz6", settings.menu_primary_label || "MENU");
     setTextBlock("comp-mcje1tq4", settings.hours_heading || "HOURS & LOCATION", "p", "font_8 wixui-rich-text__text");
     setInnerHtml("comp-mcje3w0c", toParagraphHtml(miami.hours || "Update in wp-admin"));
@@ -913,78 +1023,29 @@
     setInnerHtml("comp-mcjeaanm", toParagraphHtml(settings.mimo_happy_hour_copy || "Monday-Friday\n4pm-7pm"));
   }
 
-  function applyHallandalePage(data) {
-    const settings = data.settings || {};
-    applyRawMainMarkup(settings.hallandale_main_markup);
-    const locations = data.locations || [];
-    const hallandale = locations.find((item) => /hallandale/i.test(item.name || item.city || "")) || locations[1];
-    if (!hallandale) {
-      return;
-    }
-
-    setTextEffectsMatrix("comp-mcjenl0u", hallandale.name);
-    setTextBlock("comp-mcjfw0lf", hallandale.name, "h1", "font_2 wixui-rich-text__text");
-    setInnerHtml("comp-mcjfwlwr", toParagraphHtml(hallandale.copy));
-    setInnerHtml("comp-mcje0vnk", toParagraphHtml(hallandale.copy));
-    setAnchorHref("comp-mdp2xcky", "/hallandalemenu", "_self");
-    setButtonLabel("comp-mdp2xcky", settings.menu_secondary_label || "MENU");
-    setTextBlock("comp-mcjf99742", settings.hours_heading || "HOURS & LOCATION", "p", "font_8 wixui-rich-text__text");
-    setInnerHtml("comp-mcjf99761", toParagraphHtml(hallandale.hours || "Update in wp-admin"));
-    setInnerHtml("comp-mcjf99777", toParagraphHtml(`${hallandale.address}, ${hallandale.city}`));
-    setTextBlock("comp-mcjf997810", settings.happy_hour_heading || "HAPPY HOUR", "p", "font_8 wixui-rich-text__text");
-    setInnerHtml("comp-mcjf997913", toParagraphHtml(settings.hallandale_happy_hour_copy || "Monday-Friday\n4pm-7pm"));
-  }
-
   function applyMiamiMenuPage(data) {
     const settings = data.settings || {};
     const locations = data.locations || [];
-    const miami = locations.find((item) => /miami|mimo/i.test(item.name || item.city || "")) || locations[0];
+    const miami = locations.find((item) => /agoura hills|miami|mimo/i.test(item.name || item.city || "")) || locations[0];
     if (!miami) {
       return;
     }
 
-    if (false && (settings.miami_menu_sections || []).length) {
-      applyRawMainMarkup(
-        buildMenuPageMarkup(
-          settings.menu_page_title || "MENU",
-          settings.menu_page_brand || "UPTOWN 66",
-          `${miami.name} • ${miami.address}, ${miami.city}`,
-          settings.miami_menu_sections
-        )
-      );
-      return;
-    }
-
-    setTextBlock("comp-lxwb31ei", settings.menu_page_title || "MENU", "h1", "font_2 wixui-rich-text__text");
-    setInnerHtml("comp-lxwb87gt", toParagraphHtml(`${miami.name} • ${miami.address}, ${miami.city}`));
-    setTextBlock("comp-lxweux6y1", miami.name, "h1", "font_2 wixui-rich-text__text");
-    setTextBlock("comp-lxwbz4d4", settings.menu_page_brand || "UPTOWN 66", "h1", "font_2 wixui-rich-text__text");
-  }
-
-  function applyHallandaleMenuPage(data) {
-    const settings = data.settings || {};
-    const locations = data.locations || [];
-    const hallandale = locations.find((item) => /hallandale/i.test(item.name || item.city || "")) || locations[1];
-    if (!hallandale) {
-      return;
-    }
-
-    if (false && (settings.hallandale_menu_sections || []).length) {
-      applyRawMainMarkup(
-        buildMenuPageMarkup(
-          settings.menu_page_title || "MENU",
-          settings.menu_page_brand || "UPTOWN 66",
-          `${hallandale.name} • ${hallandale.address}, ${hallandale.city}`,
-          settings.hallandale_menu_sections
-        )
-      );
-      return;
-    }
-
-    setTextBlock("comp-mdoz462a1", settings.menu_page_title || "MENU", "h1", "font_2 wixui-rich-text__text");
-    setInnerHtml("comp-mdoz462b7", toParagraphHtml(`${hallandale.name} • ${hallandale.address}, ${hallandale.city}`));
-    setInnerHtml("comp-mdoz462d", `<p class="font_8 wixui-rich-text__text"><span class="wixui-rich-text__text">${escapeHtml(hallandale.name)}</span></p>`);
-    setInnerHtml("comp-mdoz462e16", `<p class="font_8 wixui-rich-text__text"><span class="wixui-rich-text__text">${escapeHtml(hallandale.city)}</span></p>`);
+    applyRawMainMarkup(
+      buildAgouraMenuPageMarkup(
+        settings.menu_page_title || "MENU",
+        settings.menu_page_brand || "UPTOWN 66",
+        `${miami.name} • ${miami.address}, ${miami.city}`,
+        settings.agoura_menu_images || [
+          settings.agoura_menu_image_1,
+          settings.agoura_menu_image_2,
+          settings.agoura_menu_image_3,
+          settings.agoura_menu_image_4,
+          settings.agoura_menu_image_5,
+        ],
+        settings.miami_menu_sections || []
+      )
+    );
   }
 
   function applyPageContent(data) {
@@ -1003,21 +1064,56 @@
       case "/press":
         applyPressPage(data);
         break;
+      case "/agoura-hills":
       case "/mimo":
         applyMimoPage(data);
         break;
-      case "/hallandale":
-        applyHallandalePage(data);
-        break;
+      case "/agoura-hillsmenu":
       case "/miamimenu":
         applyMiamiMenuPage(data);
-        break;
-      case "/hallandalemenu":
-        applyHallandaleMenuPage(data);
         break;
       default:
         break;
     }
+  }
+
+  function applyMiamiMenuPageLegacyOverride(data) {
+    const settings = data.settings || {};
+    const locations = data.locations || [];
+    const miami = locations.find((item) => /agoura hills|miami|mimo/i.test(item.name || item.city || "")) || locations[0];
+    if (!miami) {
+      return;
+    }
+
+    applyRawMainMarkup(
+      buildAgouraMenuPageMarkup(
+        settings.menu_page_title || "MENU",
+        settings.menu_page_brand || "UPTOWN 66",
+        `${miami.name} • ${miami.address}, ${miami.city}`,
+        settings.agoura_menu_images || [
+          settings.agoura_menu_image_1,
+          settings.agoura_menu_image_2,
+          settings.agoura_menu_image_3,
+          settings.agoura_menu_image_4,
+          settings.agoura_menu_image_5,
+        ],
+        settings.miami_menu_sections || []
+      )
+    );
+  }
+
+  function applyMiamiMenuPage(data) {
+    const settings = data.settings || {};
+    const locations = data.locations || [];
+    const miami = locations.find((item) => /agoura hills|miami|mimo/i.test(item.name || item.city || "")) || locations[0];
+    if (!miami) {
+      return;
+    }
+
+    setTextBlock("comp-lxwb31ei", settings.menu_page_title || "MENU", "h1", "font_2 wixui-rich-text__text");
+    setInnerHtml("comp-lxwb87gt", toParagraphHtml(`${miami.name} • ${miami.address}, ${miami.city}`));
+    setTextBlock("comp-lxweux6y1", miami.name, "h1", "font_2 wixui-rich-text__text");
+    setTextBlock("comp-lxwbz4d4", settings.menu_page_brand || "UPTOWN 66", "h1", "font_2 wixui-rich-text__text");
   }
 
   function clearPendingState() {

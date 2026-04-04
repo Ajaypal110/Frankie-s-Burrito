@@ -27,11 +27,9 @@ function siteFooterMarkup(settings) {
       <a href="/">HOME</a>
       <a href="/about">ABOUT</a>
       <a href="/locations">LOCATIONS</a>
-      <a href="${escapeHtml(settings.menu_primary_url)}" target="_blank" rel="noreferrer">MiMo</a>
-      <a href="${escapeHtml(settings.menu_secondary_url)}" target="_blank" rel="noreferrer">HALLANDALE</a>
+      <a href="${escapeHtml(settings.menu_primary_url)}" target="_blank" rel="noreferrer">Agoura Hills</a>
       <span>MENUS</span>
-      <a href="${escapeHtml(settings.menu_primary_url)}" target="_blank" rel="noreferrer">MiMo</a>
-      <a href="${escapeHtml(settings.menu_secondary_url)}" target="_blank" rel="noreferrer">HALLANDALE</a>
+      <a href="${escapeHtml(settings.menu_primary_url)}" target="_blank" rel="noreferrer">Agoura Hills</a>
       <a href="/press">PRESS</a>
       <a href="${escapeHtml(settings.menu_primary_url)}" target="_blank" rel="noreferrer">ORDER</a>
     </div>

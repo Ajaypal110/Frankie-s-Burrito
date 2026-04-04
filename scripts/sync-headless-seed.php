@@ -8,9 +8,9 @@ $settings['about_story_copy'] = 'From our hand-pressed tortillas of heirloom cor
 $settings['about_primary_image'] = 'https://static.wixstatic.com/media/da4e2b_27d4859a62e64fb08564fef816cd15ef~mv2.jpg/v1/fill/w_2500,h_3125,al_c/da4e2b_27d4859a62e64fb08564fef816cd15ef~mv2.jpg';
 $settings['about_secondary_image'] = 'https://static.wixstatic.com/media/da4e2b_0046467888ae4c36bcb37ea88d6821c4~mv2.jpg/v1/fill/w_147,h_221,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMGL0127_JPG.jpg';
 $settings['press_copy'] = 'Featured coverage for Uptown 66, from Miami food press to national recognition.';
-$settings['locations_title'] = 'Locations - Miami';
-$settings['locations_copy'] = 'Locations in Miami MiMo and Hallandale Atlantic Village. Update every address, menu link, and ordering link from wp-admin.';
-$settings['mimo_intro_copy'] = 'Uptown 66 made its name in Miami’s MiMo District with award-winning tacos and an unmistakable street food soul. Nestled on Biscayne Boulevard, it’s more than just our first home. It’s the heartbeat of the brand. No frills, just fire.';
+$settings['locations_title'] = 'Locations - Agoura Hills';
+$settings['locations_copy'] = 'Agoura Hills location details. Update the address, menu link, and ordering link from wp-admin.';
+$settings['mimo_intro_copy'] = 'Uptown 66 now calls Agoura Hills home, serving award-winning tacos with the same unmistakable street food soul. Nestled in the city with bold flavors and no shortcuts, it is the heartbeat of the brand. No frills, just fire.';
 $settings['mimo_happy_hour_copy'] = "Monday-Friday\n4pm-7pm";
 $settings['mimo_hero_image'] = 'https://static.wixstatic.com/media/da4e2b_b41c698c3ac24a2ba3b44d624217c546~mv2.jpg/v1/fill/w_160,h_90,al_c,q_80,usm_0.66_1.00_0.01,blur_3,enc_avif,quality_auto/da4e2b_b41c698c3ac24a2ba3b44d624217c546_mv2.jpg';
 update_option( 'frankies_headless_settings', $settings );
@@ -23,15 +23,19 @@ $locations = get_posts(
 );
 
 foreach ( $locations as $location ) {
-	if ( 'MiMo' === $location->post_title ) {
+	if ( 'MiMo' === $location->post_title || 'Agoura Hills' === $location->post_title ) {
+		wp_update_post(
+			array(
+				'ID'         => $location->ID,
+				'post_title' => 'Agoura Hills',
+			)
+		);
 		update_post_meta( $location->ID, '_fb_address', '6600 Biscayne Blvd' );
-		update_post_meta( $location->ID, '_fb_city', 'Miami, FL 33138' );
+		update_post_meta( $location->ID, '_fb_city', 'Agoura Hills, CA' );
+		update_post_meta( $location->ID, '_fb_menu_url', 'https://www.uptown66.miami/agoura-hillsmenu' );
+		update_post_meta( $location->ID, '_fb_order_url', 'https://www.uptown66.miami/agoura-hillsmenu' );
 	}
 
-	if ( 'Hallandale' === $location->post_title ) {
-		update_post_meta( $location->ID, '_fb_address', '801 N Federal Hwy Suite 109-110' );
-		update_post_meta( $location->ID, '_fb_city', 'Hallandale Beach, FL 33009' );
-	}
 }
 
 $press_posts = get_posts(

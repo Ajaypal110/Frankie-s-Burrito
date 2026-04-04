@@ -15,10 +15,15 @@ const htmlRoutes = {
   "/about": "about.html",
   "/locations": "locations.html",
   "/press": "press.html",
-  "/mimo": "mimo.html",
-  "/miamimenu": "miamimenu.html",
-  "/hallandale": "hallandale.html",
-  "/hallandalemenu": "hallandalemenu.html",
+  "/agoura-hills": "agoura-hills.html",
+  "/agoura-hillsmenu": "agoura-hillsmenu.html",
+  "/agoura-hills.html": "agoura-hills.html",
+  "/agoura-hillsmenu.html": "agoura-hillsmenu.html",
+  "/agoura.html": "agoura-hills.html",
+  "/mimo": "agoura-hills.html",
+  "/miamimenu": "agoura-hillsmenu.html",
+  "/mimo.html": "agoura-hills.html",
+  "/miamimenu.html": "agoura-hillsmenu.html",
 };
 
 const contentTypes = {
@@ -39,10 +44,13 @@ const localRouteMap = new Map([
   ["about.html", "/about"],
   ["locations.html", "/locations"],
   ["press.html", "/press"],
-  ["mimo.html", "/mimo"],
-  ["miamimenu.html", "/miamimenu"],
-  ["hallandale.html", "/hallandale"],
-  ["hallandalemenu.html", "/hallandalemenu"],
+  ["agoura-hills.html", "/agoura-hills"],
+  ["agoura-hillsmenu.html", "/agoura-hillsmenu"],
+  ["agoura.html", "/agoura-hills"],
+  ["mimo.html", "/agoura-hills"],
+  ["miamimenu.html", "/agoura-hillsmenu"],
+  ["hallandale.html", "/agoura-hills"],
+  ["hallandalemenu.html", "/agoura-hillsmenu"],
 ]);
 const TRANSPARENT_PIXEL =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
@@ -107,7 +115,7 @@ async function getSitePayload() {
   return apiCache;
 }
 
-function rewriteMirroredHtml(html, initialLogoUrl = "") {
+function rewriteMirroredHtml(html, initialLogoUrl = "", routePath = "", filePath = "") {
   const cmsPendingMarkup =
     "<script>document.documentElement.setAttribute('data-cms-pending','true');</script>" +
     "<style>html[data-cms-pending='true'] main[data-main-content-parent='true']{visibility:hidden;} html[data-cms-pending='true'] body{background:#fff;} html:not([data-cms-logo-ready='true']) [id$='comp-lx95h0im'],html:not([data-cms-logo-ready='true']) [id$='comp-lx99kw0l']{visibility:hidden !important;opacity:0 !important;}#comp-ljgxfu44,#comp-ljvlssha,#comp-ljvlw6zo,#comp-ljvltvbx,#comp-ljvltn2g,#comp-ljvlswm8{display:block !important;visibility:visible !important;opacity:1 !important;height:auto !important;min-height:fit-content !important;}#comp-lz8p89zm,#comp-lz8psxby,#comp-lz8pt0qw,#comp-lz8pt7jf{display:inline-block !important;visibility:visible !important;opacity:1 !important;width:55px !important;height:77px !important;min-width:55px !important;min-height:77px !important;margin:0 12px 0 0 !important;vertical-align:middle !important;}#comp-lz8p89zm img,#comp-lz8psxby img,#comp-lz8pt0qw img,#comp-lz8pt7jf img{display:block !important;visibility:visible !important;opacity:1 !important;width:100% !important;height:100% !important;object-fit:contain !important;filter:brightness(.18) !important;}#comp-ljvltvc712,#comp-ljvltvc612,#comp-ljvltn2r14,#comp-ljvltn2r,#comp-ljvlswmt,#comp-ljvlswms{display:block !important;visibility:visible !important;opacity:1 !important;height:auto !important;min-height:fit-content !important;}#comp-ljvltvc712 p,#comp-ljvltvc612 p,#comp-ljvltn2r14 p,#comp-ljvltn2r p,#comp-ljvlswmt p,#comp-ljvlswms p{display:block !important;color:#2f160f !important;}#comp-ljvltvc612 p,#comp-ljvltn2r p,#comp-ljvlswms p{color:#7a6257 !important;}@media screen and (max-width:750px){#comp-lz8p89zm,#comp-lz8psxby,#comp-lz8pt0qw,#comp-lz8pt7jf{width:44px !important;height:62px !important;min-width:44px !important;min-height:62px !important;margin-right:8px !important;}}</style>";
@@ -146,7 +154,7 @@ function rewriteMirroredHtml(html, initialLogoUrl = "") {
     ""
   );
 
-  const localized = wordpressLocalized.replace(
+  let localized = wordpressLocalized.replace(
     /(href|src)=["']([^"']+?\.html)(#[^"']*)?["']/gi,
     (full, attr, fileName, hash = "") => {
       const cleanFileName = fileName.replace(/^\.?\//, "");
@@ -158,6 +166,22 @@ function rewriteMirroredHtml(html, initialLogoUrl = "") {
     }
   );
 
+  const currentRoute =
+    routePath ||
+    localRouteMap.get(path.basename(filePath).toLowerCase()) ||
+    "/";
+
+  if (currentRoute) {
+    const canonicalFile = currentRoute === "/" ? "index.html" : `${currentRoute.replace(/^\//, "")}.html`;
+    const absoluteRouteUrl = `https://www.uptown66.miami${currentRoute}`;
+
+    localized = localized
+      .replace(/<link rel="canonical" href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${canonicalFile}"/>`)
+      .replace(/<meta property="og:url" content="[^"]*"\s*\/?>/i, `<meta property="og:url" content="${absoluteRouteUrl}"/>`)
+      .replace(/"requestUrl":"https:\\\/\\\/www\.uptown66\.miami\\\/[^"]*"/g, `"requestUrl":"${absoluteRouteUrl.replace(/\//g, "\\/")}"`)
+      .replace(/"href_matches":"\/[^"]*"/g, `"href_matches":"${currentRoute}"`);
+  }
+
   if (localized.includes("/cms-bridge.js")) {
     return localized;
   }
@@ -168,7 +192,7 @@ function rewriteMirroredHtml(html, initialLogoUrl = "") {
   );
 }
 
-async function sendFile(filePath, res) {
+async function sendFile(filePath, res, routePath = "") {
   try {
     const data = await fs.promises.readFile(filePath);
     const extension = path.extname(filePath).toLowerCase();
@@ -191,7 +215,7 @@ async function sendFile(filePath, res) {
       } catch (error) {
         initialLogoUrl = "";
       }
-      body = rewriteMirroredHtml(data.toString("utf8"), initialLogoUrl);
+      body = rewriteMirroredHtml(data.toString("utf8"), initialLogoUrl, routePath, filePath);
     }
 
     res.writeHead(200, headers);
@@ -271,11 +295,11 @@ const server = http.createServer(async (req, res) => {
     fs.existsSync(absolutePath) &&
     fs.statSync(absolutePath).isFile()
   ) {
-    await sendFile(absolutePath, res);
+    await sendFile(absolutePath, res, url.pathname);
     return;
   }
   if (htmlRoutes[url.pathname] || !path.extname(url.pathname)) {
-    await sendFile(path.join(PUBLIC_DIR, "index.html"), res);
+    await sendFile(path.join(PUBLIC_DIR, "index.html"), res, url.pathname);
     return;
   }
 

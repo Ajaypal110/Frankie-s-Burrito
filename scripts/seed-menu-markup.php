@@ -25,9 +25,7 @@ $markup_map = array(
 	'locations_main_markup'  => 'locations.html',
 	'press_main_markup'      => 'press.html',
 	'mimo_main_markup'       => 'mimo.html',
-	'hallandale_main_markup' => 'hallandale.html',
 	'miami_menu_markup'      => 'miamimenu.html',
-	'hallandale_menu_markup' => 'hallandalemenu.html',
 );
 
 foreach ( $markup_map as $setting_key => $file_name ) {

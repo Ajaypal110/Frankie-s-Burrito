@@ -129,13 +129,13 @@ final class Frankies_Headless_CMS {
 			'fb_city',
 			__( 'City / area label', 'frankies-headless-cms' ),
 			get_post_meta( $post->ID, '_fb_city', true ),
-			__( 'Example: Miami MiMo or Hallandale', 'frankies-headless-cms' )
+			__( 'Example: Agoura Hills', 'frankies-headless-cms' )
 		);
 		self::render_text_input(
 			'fb_address',
 			__( 'Address', 'frankies-headless-cms' ),
 			get_post_meta( $post->ID, '_fb_address', true ),
-			__( 'Example: 6600 Biscayne Blvd, Miami, FL 33138', 'frankies-headless-cms' )
+			__( 'Example: 6600 Agoura Rd, Agoura Hills, CA 91301', 'frankies-headless-cms' )
 		);
 		self::render_textarea_input(
 			'fb_hours',
@@ -154,7 +154,7 @@ final class Frankies_Headless_CMS {
 			'fb_menu_url',
 			__( 'Menu page URL', 'frankies-headless-cms' ),
 			get_post_meta( $post->ID, '_fb_menu_url', true ),
-			__( 'Example: https://www.yoursite.com/miamimenu', 'frankies-headless-cms' )
+			__( 'Example: https://www.yoursite.com/agoura-hillsmenu', 'frankies-headless-cms' )
 		);
 		self::render_url_input(
 			'fb_order_url',
@@ -730,7 +730,6 @@ final class Frankies_Headless_CMS {
 						'fields' => array(
 							'locations_title',
 							'miami_label',
-							'hallandale_label',
 						),
 					),
 					array(
@@ -738,7 +737,6 @@ final class Frankies_Headless_CMS {
 						'fields' => array(
 							'locations_intro_image',
 							'locations_miami_image',
-							'locations_hallandale_image',
 						),
 					),
 				),
@@ -808,11 +806,11 @@ final class Frankies_Headless_CMS {
 			'mimo' => array(
 				'route'       => 'mimo',
 				'menu_slug'   => 'frankies-headless-page-mimo',
-				'title'       => __( 'Miami Location', 'frankies-headless-cms' ),
-				'description' => __( 'Main content for the Miami location route.', 'frankies-headless-cms' ),
+				'title'       => __( 'Agoura Hills Location', 'frankies-headless-cms' ),
+				'description' => __( 'Main content for the Agoura Hills location route.', 'frankies-headless-cms' ),
 				'field_groups' => array(
 					array(
-						'label'  => __( 'Miami Location Content', 'frankies-headless-cms' ),
+						'label'  => __( 'Agoura Hills Location Content', 'frankies-headless-cms' ),
 						'fields' => array(
 							'miami_label',
 							'mimo_intro_copy',
@@ -823,74 +821,54 @@ final class Frankies_Headless_CMS {
 						),
 					),
 					array(
-						'label'  => __( 'Miami Location Image', 'frankies-headless-cms' ),
+						'label'  => __( 'Agoura Hills Location Image', 'frankies-headless-cms' ),
 						'fields' => array(
 							'mimo_hero_image',
 						),
 					),
 				),
 				'markup_field' => 'mimo_main_markup',
-				'markup_label' => __( 'Miami location page exact markup', 'frankies-headless-cms' ),
-				'preview_url' => home_url( '/mimo' ),
-			),
-			'hallandale' => array(
-				'route'       => 'hallandale',
-				'menu_slug'   => 'frankies-headless-page-hallandale',
-				'title'       => __( 'Hallandale Location', 'frankies-headless-cms' ),
-				'description' => __( 'Main content for the Hallandale location route.', 'frankies-headless-cms' ),
-				'field_groups' => array(
-					array(
-						'label'  => __( 'Hallandale Content', 'frankies-headless-cms' ),
-						'fields' => array(
-							'hallandale_label',
-							'hallandale_subtitle',
-							'hours_heading',
-							'happy_hour_heading',
-							'hallandale_happy_hour_copy',
-						),
-					),
-				),
-				'markup_field' => 'hallandale_main_markup',
-				'markup_label' => __( 'Hallandale page exact markup', 'frankies-headless-cms' ),
-				'preview_url' => home_url( '/hallandale' ),
+				'markup_label' => __( 'Agoura Hills location page exact markup', 'frankies-headless-cms' ),
+				'preview_url' => home_url( '/agoura-hills' ),
 			),
 			'miamimenu' => array(
 				'route'       => 'miamimenu',
 				'menu_slug'   => 'frankies-headless-page-miamimenu',
-				'title'       => __( 'Miami Menu', 'frankies-headless-cms' ),
-				'description' => __( 'Main content for the Miami menu route.', 'frankies-headless-cms' ),
-				'field_groups' => array(
-					array(
-						'label'  => __( 'Miami Menu Content', 'frankies-headless-cms' ),
-						'fields' => array(
-							'menu_page_title',
-							'menu_page_brand',
-							'miami_menu_sections',
-						),
-					),
-				),
+				'title'       => __( 'Agoura Hills Menu', 'frankies-headless-cms' ),
+				'description' => __( 'Main content for the Agoura Hills menu route.', 'frankies-headless-cms' ),
+				'field_groups' => self::agoura_menu_page_field_groups(),
 				'markup_field' => 'miami_menu_markup',
-				'markup_label' => __( 'Miami menu page exact markup', 'frankies-headless-cms' ),
-				'preview_url' => home_url( '/miamimenu' ),
+				'markup_label' => __( 'Agoura Hills menu page exact markup', 'frankies-headless-cms' ),
+				'preview_url' => home_url( '/agoura-hillsmenu' ),
 			),
-			'hallandalemenu' => array(
-				'route'       => 'hallandalemenu',
-				'menu_slug'   => 'frankies-headless-page-hallandalemenu',
-				'title'       => __( 'Hallandale Menu', 'frankies-headless-cms' ),
-				'description' => __( 'Main content for the Hallandale menu route.', 'frankies-headless-cms' ),
-				'field_groups' => array(
-					array(
-						'label'  => __( 'Hallandale Menu Content', 'frankies-headless-cms' ),
-						'fields' => array(
-							'menu_page_title',
-							'menu_page_brand',
-							'hallandale_menu_sections',
-						),
-					),
-				),
-				'markup_field' => 'hallandale_menu_markup',
-				'markup_label' => __( 'Hallandale menu page exact markup', 'frankies-headless-cms' ),
-				'preview_url' => home_url( '/hallandalemenu' ),
+		);
+	}
+
+	private static function agoura_menu_image_field_keys() {
+		return array(
+			'agoura_menu_image_1',
+			'agoura_menu_image_2',
+			'agoura_menu_image_3',
+			'agoura_menu_image_4',
+			'agoura_menu_image_5',
+		);
+	}
+
+	private static function agoura_menu_page_field_groups() {
+		return array(
+			array(
+				'label'       => __( 'Agoura Hills Menu Images', 'frankies-headless-cms' ),
+				'description' => __( 'Five editable image fields for the Agoura Hills menu page.', 'frankies-headless-cms' ),
+				'fields'      => self::agoura_menu_image_field_keys(),
+			),
+			array(
+			'label'       => __( 'Agoura Hills Menu Sections', 'frankies-headless-cms' ),
+			'description' => __( 'Structured menu sections for the Agoura Hills menu page.', 'frankies-headless-cms' ),
+			'fields'      => array(
+				'menu_page_title',
+				'menu_page_brand',
+				'miami_menu_sections',
+			),
 			),
 		);
 	}
@@ -910,7 +888,6 @@ final class Frankies_Headless_CMS {
 		echo '<p class="fb-home-preview__copy" data-preview-target="hero_copy">' . esc_html( $settings['hero_copy'] ) . '</p>';
 		echo '<div class="fb-home-preview__actions">';
 		echo '<a href="#" class="button button-primary" data-preview-target="menu_primary_label">' . esc_html( $settings['menu_primary_label'] ) . '</a>';
-		echo '<a href="#" class="button" data-preview-target="menu_secondary_label">' . esc_html( $settings['menu_secondary_label'] ) . '</a>';
 		echo '</div>';
 		echo '<div class="fb-home-preview__hero-images">';
 		echo '<img src="' . esc_url( $settings['hero_left_image'] ) . '" alt="" data-preview-image="hero_left_image" />';
@@ -1186,8 +1163,21 @@ final class Frankies_Headless_CMS {
 				$settings,
 				array(
 					'gallery_images' => self::explode_lines( $settings['gallery_images'] ),
+					'agoura_menu_images' => array_values(
+						array_filter(
+							array_map(
+								'trim',
+								array(
+									$settings['agoura_menu_image_1'] ?? '',
+									$settings['agoura_menu_image_2'] ?? '',
+									$settings['agoura_menu_image_3'] ?? '',
+									$settings['agoura_menu_image_4'] ?? '',
+									$settings['agoura_menu_image_5'] ?? '',
+								)
+							)
+						)
+					),
 					'miami_menu_sections' => self::decode_menu_sections( $settings['miami_menu_sections'] ?? '[]' ),
-					'hallandale_menu_sections' => self::decode_menu_sections( $settings['hallandale_menu_sections'] ?? '[]' ),
 					'nav_items'      => array(
 						array( 'label' => 'HOME', 'slug' => '/' ),
 						array( 'label' => 'ABOUT', 'slug' => '/about' ),
@@ -1309,6 +1299,18 @@ final class Frankies_Headless_CMS {
 				'posts_per_page' => -1,
 				'orderby'        => 'menu_order title',
 				'order'          => 'ASC',
+			)
+		);
+
+		$posts = array_values(
+			array_filter(
+				$posts,
+				static function ( $post ) {
+					$title = strtolower( (string) $post->post_title );
+					$content = strtolower( (string) $post->post_content );
+
+					return false === strpos( $title, 'hallandale' ) && false === strpos( $content, 'hallandale' );
+				}
 			)
 		);
 
@@ -1779,7 +1781,6 @@ jQuery(function ($) {
       "secret_sauce_title",
       "secret_sauce_copy",
       "menu_primary_label",
-      "menu_secondary_label",
       "follow_label",
       "footer_note"
     ].forEach(function (key) {
@@ -2095,7 +2096,7 @@ JS;
 	}
 
 	private static function settings_fields() {
-		return array(
+		$fields = array(
 			'brand_name'           => array( 'label' => 'Brand name', 'type' => 'text', 'section' => 'frankies_headless_branding', 'placeholder' => 'UPTOWN 66' ),
 			'logo_image'           => array( 'label' => 'Logo image', 'type' => 'media', 'section' => 'frankies_headless_branding', 'placeholder' => 'https://...', 'preview' => true ),
 			'hero_title'           => array( 'label' => 'Hero title', 'type' => 'text', 'section' => 'frankies_headless_home_hero', 'placeholder' => 'UPTOWN 66' ),
@@ -2103,10 +2104,8 @@ JS;
 			'secret_sauce_title'   => array( 'label' => 'Secret sauce title', 'type' => 'text', 'section' => 'frankies_headless_home_hero', 'placeholder' => 'THE SECRET SAUCE OF UPTOWN 66' ),
 			'secret_sauce_copy'    => array( 'label' => 'Secret sauce copy', 'type' => 'textarea', 'rows' => 5, 'section' => 'frankies_headless_home_hero', 'placeholder' => 'Secondary homepage story copy.' ),
 			'order_url'            => array( 'label' => 'Global order URL', 'type' => 'url', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'https://example.com/order' ),
-			'menu_primary_label'   => array( 'label' => 'Miami menu button label', 'type' => 'text', 'section' => 'frankies_headless_home_menu', 'placeholder' => 'MENU' ),
-			'menu_primary_url'     => array( 'label' => 'Miami menu button link', 'type' => 'url', 'section' => 'frankies_headless_home_menu', 'placeholder' => 'https://www.yoursite.com/miamimenu' ),
-			'menu_secondary_label' => array( 'label' => 'Hallandale menu button label', 'type' => 'text', 'section' => 'frankies_headless_home_menu', 'placeholder' => 'MENU' ),
-			'menu_secondary_url'   => array( 'label' => 'Hallandale menu button link', 'type' => 'url', 'section' => 'frankies_headless_home_menu', 'placeholder' => 'https://www.yoursite.com/hallandalemenu' ),
+			'menu_primary_label'   => array( 'label' => 'Agoura Hills menu button label', 'type' => 'text', 'section' => 'frankies_headless_home_menu', 'placeholder' => 'MENU' ),
+			'menu_primary_url'     => array( 'label' => 'Agoura Hills menu button link', 'type' => 'url', 'section' => 'frankies_headless_home_menu', 'placeholder' => 'https://www.yoursite.com/agoura-hillsmenu' ),
 			'follow_label'         => array( 'label' => 'Follow label', 'type' => 'text', 'section' => 'frankies_headless_home_menu', 'placeholder' => 'FOLLOW US' ),
 			'instagram_url'        => array( 'label' => 'Instagram URL', 'type' => 'url', 'section' => 'frankies_headless_home_menu', 'placeholder' => 'https://www.instagram.com/youraccount/' ),
 			'footer_note'          => array( 'label' => 'Footer note', 'type' => 'text', 'section' => 'frankies_headless_home_menu', 'placeholder' => 'Short footer line.' ),
@@ -2147,34 +2146,65 @@ JS;
 			'locations_title'      => array( 'label' => 'Locations card title', 'type' => 'text', 'section' => 'frankies_headless_locations_page', 'placeholder' => 'Locations' ),
 			'locations_copy'       => array( 'label' => 'Locations page intro', 'type' => 'textarea', 'rows' => 4, 'section' => 'frankies_headless_locations_page', 'placeholder' => 'Short intro above the locations list.' ),
 			'locations_intro_image' => array( 'label' => 'Locations intro card image', 'type' => 'media', 'section' => 'frankies_headless_locations_page', 'placeholder' => 'https://...', 'preview' => true ),
-			'locations_miami_image' => array( 'label' => 'Miami location card image', 'type' => 'media', 'section' => 'frankies_headless_locations_page', 'placeholder' => 'https://...', 'preview' => true ),
-			'locations_hallandale_image' => array( 'label' => 'Hallandale location card image', 'type' => 'media', 'section' => 'frankies_headless_locations_page', 'placeholder' => 'https://...', 'preview' => true ),
-			'miami_label'          => array( 'label' => 'Miami location label', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Miami' ),
-			'mimo_intro_copy'      => array( 'label' => 'Miami intro copy', 'type' => 'textarea', 'rows' => 4, 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Intro copy shown above the Miami menu button.' ),
-			'mimo_happy_hour_copy' => array( 'label' => 'Miami happy hour copy', 'type' => 'textarea', 'rows' => 3, 'section' => 'frankies_headless_menu_page_content', 'placeholder' => "Monday-Friday\n4pm-7pm" ),
-			'mimo_hero_image'      => array( 'label' => 'Miami hero image', 'type' => 'media', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'https://...', 'preview' => true ),
-			'hallandale_label'     => array( 'label' => 'Hallandale location label', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Hallandale' ),
-			'hallandale_subtitle'  => array( 'label' => 'Hallandale location subtitle', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Atlantic Village' ),
+			'locations_miami_image' => array( 'label' => 'Agoura Hills location card image', 'type' => 'media', 'section' => 'frankies_headless_locations_page', 'placeholder' => 'https://...', 'preview' => true ),
+			'miami_label'          => array( 'label' => 'Agoura Hills location label', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Agoura Hills' ),
+			'mimo_intro_copy'      => array( 'label' => 'Agoura Hills intro copy', 'type' => 'textarea', 'rows' => 4, 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Intro copy shown above the Agoura Hills menu button.' ),
+			'mimo_happy_hour_copy' => array( 'label' => 'Agoura Hills happy hour copy', 'type' => 'textarea', 'rows' => 3, 'section' => 'frankies_headless_menu_page_content', 'placeholder' => "Monday-Friday\n4pm-7pm" ),
+			'mimo_hero_image'      => array( 'label' => 'Agoura Hills hero image', 'type' => 'media', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'https://...', 'preview' => true ),
 			'hours_heading'        => array( 'label' => 'Hours and location heading', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'HOURS & LOCATION' ),
 			'happy_hour_heading'   => array( 'label' => 'Happy hour heading', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'HAPPY HOUR' ),
-			'hallandale_happy_hour_copy' => array( 'label' => 'Hallandale happy hour copy', 'type' => 'textarea', 'rows' => 3, 'section' => 'frankies_headless_menu_page_content', 'placeholder' => "Monday-Friday\n4pm-7pm" ),
 			'menu_page_title'      => array( 'label' => 'Menu page title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'MENU' ),
 			'menu_page_brand'      => array( 'label' => 'Menu page brand title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'UPTOWN 66' ),
-			'miami_menu_sections'  => array( 'label' => 'Miami menu sections', 'type' => 'menu_builder', 'section' => 'frankies_headless_menu_page_content' ),
-			'hallandale_menu_sections' => array( 'label' => 'Hallandale menu sections', 'type' => 'menu_builder', 'section' => 'frankies_headless_menu_page_content' ),
+			'miami_menu_sections'  => array( 'label' => 'Agoura Hills menu sections', 'type' => 'menu_builder', 'section' => 'frankies_headless_menu_page_content' ),
 			'home_main_markup'     => array( 'label' => 'Home page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the Home page main area.', 'section' => 'frankies_headless_menus' ),
 			'about_main_markup'    => array( 'label' => 'About page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the About page main area.', 'section' => 'frankies_headless_menus' ),
 			'locations_main_markup' => array( 'label' => 'Locations page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the Locations page main area.', 'section' => 'frankies_headless_menus' ),
 			'press_main_markup'    => array( 'label' => 'Press page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the Press page main area.', 'section' => 'frankies_headless_menus' ),
-			'mimo_main_markup'     => array( 'label' => 'Miami location page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the Miami location page main area.', 'section' => 'frankies_headless_menus' ),
-			'hallandale_main_markup' => array( 'label' => 'Hallandale page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the Hallandale page main area.', 'section' => 'frankies_headless_menus' ),
-			'miami_menu_markup'    => array( 'label' => 'Miami menu page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the Miami menu main area.', 'section' => 'frankies_headless_menus' ),
-			'hallandale_menu_markup' => array( 'label' => 'Hallandale menu page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the Hallandale menu main area.', 'section' => 'frankies_headless_menus' ),
+			'mimo_main_markup'     => array( 'label' => 'Agoura Hills location page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the Agoura Hills location page main area.', 'section' => 'frankies_headless_menus' ),
+			'miami_menu_markup'    => array( 'label' => 'Agoura Hills menu page markup', 'type' => 'textarea', 'rows' => 18, 'raw' => true, 'help' => 'Raw HTML for the Agoura Hills menu main area.', 'section' => 'frankies_headless_menus' ),
 		);
+
+		$fields['agoura_menu_image_1'] = array(
+			'label'       => 'Agoura Hills menu image 1',
+			'type'        => 'media',
+			'section'     => 'frankies_headless_menu_page_content',
+			'placeholder' => 'https://...',
+			'preview'     => true,
+		);
+		$fields['agoura_menu_image_2'] = array(
+			'label'       => 'Agoura Hills menu image 2',
+			'type'        => 'media',
+			'section'     => 'frankies_headless_menu_page_content',
+			'placeholder' => 'https://...',
+			'preview'     => true,
+		);
+		$fields['agoura_menu_image_3'] = array(
+			'label'       => 'Agoura Hills menu image 3',
+			'type'        => 'media',
+			'section'     => 'frankies_headless_menu_page_content',
+			'placeholder' => 'https://...',
+			'preview'     => true,
+		);
+		$fields['agoura_menu_image_4'] = array(
+			'label'       => 'Agoura Hills menu image 4',
+			'type'        => 'media',
+			'section'     => 'frankies_headless_menu_page_content',
+			'placeholder' => 'https://...',
+			'preview'     => true,
+		);
+		$fields['agoura_menu_image_5'] = array(
+			'label'       => 'Agoura Hills menu image 5',
+			'type'        => 'media',
+			'section'     => 'frankies_headless_menu_page_content',
+			'placeholder' => 'https://...',
+			'preview'     => true,
+		);
+
+		return $fields;
 	}
 
 	private static function default_settings() {
-		return array(
+		$defaults = array(
 			'brand_name'           => 'UPTOWN 66',
 			'logo_image'           => '',
 			'hero_title'           => 'UPTOWN 66',
@@ -2183,9 +2213,7 @@ JS;
 			'secret_sauce_copy'    => 'WITH THE CELEBRATION OF OUR CULINARY PASSION, UPTOWN 66 FEATURES HAND-PRESSED TORTILLAS MADE FROM HEIRLOOM CORN SOURCED FROM OAXACA AND SIGNATURE BARBACOA CRAFTED FROM SHORT-RIB, OXTAIL, AND BEEF CHEEK, ALL SLOW-BRAISED WITH MEXICAN CHILIS TO DEVELOP RICH, AUTHENTIC FLAVORS.',
 			'order_url'            => 'https://frankiesbreakfastburritos.toast.site/',
 			'menu_primary_label'   => 'MENU',
-			'menu_primary_url'     => 'https://www.uptown66.miami/miamimenu',
-			'menu_secondary_label' => 'MENU',
-			'menu_secondary_url'   => 'https://www.uptown66.miami/hallandalemenu',
+			'menu_primary_url'     => 'https://www.uptown66.miami/agoura-hillsmenu',
 			'follow_label'         => 'FOLLOW US',
 			'instagram_url'        => 'https://www.instagram.com/uptown66miami/',
 			'footer_note'          => 'Authentic Mexican street food. Headless, editable, and fast.',
@@ -2232,20 +2260,16 @@ JS;
 			'press_item_4_outlet'  => 'BROKEN PLATE',
 			'press_item_4_title'   => 'A Miami Taco Place is Crowned Number One',
 			'press_item_4_url'     => 'https://www.brokenpalate.com/p/a-miami-taco-place-is-crowned-number',
-			'locations_title'      => 'Locations - Miami',
-			'locations_copy'       => 'Locations in Miami MiMo and Hallandale Atlantic Village. Update every address, menu link, and ordering link from wp-admin.',
+			'locations_title'      => 'Locations - Agoura Hills',
+			'locations_copy'       => 'Agoura Hills location details. Update the address, menu link, and ordering link from wp-admin.',
 			'locations_intro_image' => '',
 			'locations_miami_image' => '',
-			'locations_hallandale_image' => '',
-			'miami_label'          => 'Miami',
-			'mimo_intro_copy'      => 'Uptown 66 made its name in Miami’s MiMo District with award-winning tacos and an unmistakable street food soul. Nestled on Biscayne Boulevard, it’s more than just our first home. It’s the heartbeat of the brand. No frills, just fire.',
+			'miami_label'          => 'Agoura Hills',
+			'mimo_intro_copy'      => 'Uptown 66 now calls Agoura Hills home, serving award-winning tacos with the same unmistakable street food soul. Nestled in the city with bold flavors and no shortcuts, it is the heartbeat of the brand. No frills, just fire.',
 			'mimo_happy_hour_copy' => "Monday-Friday\n4pm-7pm",
 			'mimo_hero_image'      => 'https://static.wixstatic.com/media/da4e2b_b41c698c3ac24a2ba3b44d624217c546~mv2.jpg/v1/fill/w_160,h_90,al_c,q_80,usm_0.66_1.00_0.01,blur_3,enc_avif,quality_auto/da4e2b_b41c698c3ac24a2ba3b44d624217c546_mv2.jpg',
-			'hallandale_label'     => 'Hallandale',
-			'hallandale_subtitle'  => 'Atlantic Village',
 			'hours_heading'        => 'HOURS & LOCATION',
 			'happy_hour_heading'   => 'HAPPY HOUR',
-			'hallandale_happy_hour_copy' => "Monday-Friday\n4pm-7pm",
 			'menu_page_title'      => 'MENU',
 			'menu_page_brand'      => 'UPTOWN 66',
 			'miami_menu_sections'  => wp_json_encode(
@@ -2277,39 +2301,21 @@ JS;
 					),
 				)
 			),
-			'hallandale_menu_sections' => wp_json_encode(
-				array(
-					array(
-						'title' => 'Specialties',
-						'items' => array(
-							array(
-								'name'        => 'Birria Quesadilla',
-								'price'       => '$16',
-								'description' => 'Crispy tortilla, cheese, consommé, and birria.',
-							),
-						),
-					),
-					array(
-						'title' => 'Drinks',
-						'items' => array(
-							array(
-								'name'        => 'Horchata',
-								'price'       => '$5',
-								'description' => 'House-made cinnamon rice drink.',
-							),
-						),
-					),
-				)
-			),
 			'home_main_markup'     => '',
 			'about_main_markup'    => '',
 			'locations_main_markup' => '',
 			'press_main_markup'    => '',
 			'mimo_main_markup'     => '',
-			'hallandale_main_markup' => '',
 			'miami_menu_markup'    => '',
-			'hallandale_menu_markup' => '',
 		);
+
+		$defaults['agoura_menu_image_1'] = '';
+		$defaults['agoura_menu_image_2'] = '';
+		$defaults['agoura_menu_image_3'] = '';
+		$defaults['agoura_menu_image_4'] = '';
+		$defaults['agoura_menu_image_5'] = '';
+
+		return $defaults;
 	}
 
 	private static function current_settings() {
@@ -2400,22 +2406,12 @@ JS;
 		if ( ! get_posts( array( 'post_type' => 'fb_location', 'posts_per_page' => 1 ) ) ) {
 			$locations = array(
 				array(
-					'title'     => 'MiMo',
-					'content'   => 'Original Uptown 66 location serving Mexican street food in Miami.',
+					'title'     => 'Agoura Hills',
+					'content'   => 'Original Uptown 66 location serving Mexican street food in Agoura Hills.',
 					'address'   => '6600 Biscayne Blvd',
-					'city'      => 'Miami, FL 33138',
-					'menu_url'  => 'https://www.uptown66.miami/miamimenu',
-					'order_url' => 'https://www.uptown66.miami/miamimenu',
-					'hours'     => 'Update in wp-admin',
-					'phone'     => 'Update in wp-admin',
-				),
-				array(
-					'title'     => 'Hallandale',
-					'content'   => 'Second Uptown 66 location with editable content from WordPress.',
-					'address'   => '801 N Federal Hwy Suite 109-110',
-					'city'      => 'Hallandale Beach, FL 33009',
-					'menu_url'  => 'https://www.uptown66.miami/hallandalemenu',
-					'order_url' => 'https://www.uptown66.miami/hallandalemenu',
+					'city'      => 'Agoura Hills, CA',
+					'menu_url'  => 'https://www.uptown66.miami/agoura-hillsmenu',
+					'order_url' => 'https://www.uptown66.miami/agoura-hillsmenu',
 					'hours'     => 'Update in wp-admin',
 					'phone'     => 'Update in wp-admin',
 				),
