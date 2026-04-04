@@ -688,6 +688,66 @@
       .join("")}</div>`;
   }
 
+  function ensureHomeSkullLayoutStyles() {
+    if (document.getElementById("cms-home-skull-layout-styles")) {
+      return;
+    }
+
+    const style = document.createElement("style");
+    style.id = "cms-home-skull-layout-styles";
+    style.textContent = `
+      #comp-ljgxfu44 .comp-ljgxfu44-container{
+        display:flex !important;
+        justify-content:center !important;
+        align-items:center !important;
+        gap:24px !important;
+        flex-wrap:wrap !important;
+      }
+      #comp-ljgxfu44 [data-cms-skull-row="true"]{
+        display:none !important;
+      }
+      ${HOME_SKULL_IDS.map(
+        (id) => `
+      #${id}{
+        position:relative !important;
+        display:block !important;
+        width:55px !important;
+        height:77px !important;
+        min-width:55px !important;
+        margin:0 !important;
+        inset:auto !important;
+        align-self:auto !important;
+        justify-self:auto !important;
+        grid-area:auto !important;
+        transform:none !important;
+        opacity:1 !important;
+        visibility:visible !important;
+        pointer-events:none !important;
+      }
+      #${id} wow-image,
+      #${id} picture,
+      #${id} img{
+        width:100% !important;
+        height:100% !important;
+      }`
+      ).join("")}
+      @media screen and (max-width: 750px){
+        #comp-ljgxfu44 .comp-ljgxfu44-container{
+          gap:18px !important;
+        }
+        ${HOME_SKULL_IDS.map(
+          (id) => `
+        #${id}{
+          width:46px !important;
+          height:64px !important;
+          min-width:46px !important;
+        }`
+        ).join("")}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   function mountReferenceSkullRow(skullSrc) {
     const container =
       document.querySelector("#comp-ljgxfu44 > .comp-ljgxfu44-container") ||
@@ -697,24 +757,27 @@
       return;
     }
 
+    ensureHomeSkullLayoutStyles();
+
     HOME_SKULL_IDS.forEach((id) => {
       const node = document.getElementById(id);
       if (node) {
-        node.style.display = "none";
-        node.style.visibility = "hidden";
-        node.style.opacity = "0";
+        forceVisible(node);
+        node.style.setProperty("position", "relative", "important");
+        node.style.setProperty("display", "block", "important");
+        node.style.setProperty("width", "55px", "important");
+        node.style.setProperty("height", "77px", "important");
+        node.style.setProperty("margin", "0", "important");
+        node.style.setProperty("inset", "auto", "important");
+        node.style.setProperty("transform", "none", "important");
+        node.style.setProperty("pointer-events", "none", "important");
       }
     });
 
     const existing = container.querySelector("[data-cms-skull-row='true']");
-    const markup = buildReferenceSkullRowMarkup(skullSrc);
-
     if (existing) {
-      existing.outerHTML = markup;
-      return;
+      existing.remove();
     }
-
-    container.insertAdjacentHTML("afterbegin", markup);
   }
 
   function isRendered(node) {
