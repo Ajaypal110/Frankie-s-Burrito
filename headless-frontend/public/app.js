@@ -38,6 +38,21 @@ function siteFooterMarkup(settings) {
   `;
 }
 
+function getAboutContent(settings) {
+  const legacyParts = String(settings.about_copy || "")
+    .split(/\n\n+|(?<=[.?!])\s+(?=[A-Z])/)
+    .map((part) => decodeEntities(part).trim())
+    .filter(Boolean);
+
+  return {
+    introLead: decodeEntities(settings.about_intro_lead || legacyParts[0] || ""),
+    introFollowup: decodeEntities(settings.about_intro_followup || legacyParts[1] || ""),
+    storyCopy: decodeEntities(
+      settings.about_story_copy || legacyParts.slice(2).join(" ") || settings.about_copy || ""
+    ),
+  };
+}
+
 function heroTemplate(settings) {
   return `
     <section class="hero">
@@ -96,18 +111,25 @@ function homepageTemplate(data) {
 
 function aboutTemplate(data) {
   const { settings } = data;
+  const about = getAboutContent(settings);
+  const introMarkup = [about.introLead, about.introFollowup]
+    .filter(Boolean)
+    .map((paragraph) => `<p class="plain-copy">${escapeHtml(paragraph)}</p>`)
+    .join("");
+
   return `
     <section class="page-block">
       <div class="eyebrow">ABOUT</div>
       <div class="about-layout">
         <div>
           <h1 class="page-title">${escapeHtml(settings.about_title)}</h1>
-          <p class="plain-copy">${escapeHtml(settings.about_copy)}</p>
+          ${introMarkup}
         </div>
         <div class="about-visual">
           <img class="about-secondary" src="${escapeHtml(settings.about_secondary_image)}" alt="${escapeHtml(settings.brand_name)} secondary image">
         </div>
       </div>
+      ${about.storyCopy ? `<p class="plain-copy" style="margin-top:24px">${escapeHtml(about.storyCopy)}</p>` : ""}
       <div style="margin-top:24px">
         <img class="about-primary" src="${escapeHtml(settings.about_primary_image)}" alt="${escapeHtml(settings.brand_name)} primary image">
       </div>

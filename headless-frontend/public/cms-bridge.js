@@ -69,6 +69,21 @@
       .replace(/'/g, "&#39;");
   }
 
+  function getAboutContent(settings) {
+    const legacyParts = String(settings.about_copy || "")
+      .split(/\n\n+|(?<=[.?!])\s+(?=[A-Z])/)
+      .map((part) => decodeEntities(part).trim())
+      .filter(Boolean);
+
+    return {
+      introLead: decodeEntities(settings.about_intro_lead || legacyParts[0] || ""),
+      introFollowup: decodeEntities(settings.about_intro_followup || legacyParts[1] || ""),
+      storyCopy: decodeEntities(
+        settings.about_story_copy || legacyParts.slice(2).join(" ") || settings.about_copy || ""
+      ),
+    };
+  }
+
   function normalizePath(value) {
     return value || "/";
   }
@@ -768,15 +783,16 @@
 
   function applyAboutPage(data) {
     const settings = data.settings || {};
+    const about = getAboutContent(settings);
     applyRawMainMarkup(settings.about_main_markup);
-    const paragraphs = String(settings.about_copy || "")
-      .split(/(?<=[.?!])\s+(?=[A-Z])/)
-      .filter(Boolean);
-    const intro = paragraphs.slice(0, 2).join(" ");
-    const body = paragraphs.slice(2).join(" ") || settings.about_copy;
+    const intro = [about.introLead, about.introFollowup].filter(Boolean).join("\n\n");
+    const body = about.storyCopy;
 
     setTextBlock("comp-lx9bcd2c", settings.about_title, "h1", "font_2 wixui-rich-text__text");
     setInnerHtml("comp-lx9bb9j9", toParagraphHtml(intro));
+    setTextBlock("comp-lx9blw9o", settings.about_chef_label, "h2", "font_3 wixui-rich-text__text");
+    setTextBlock("comp-lj5hsky9", settings.about_chef_heading, "h3", "font_6 wixui-rich-text__text");
+    setInnerHtml("comp-lj5hskqm3", toParagraphHtml(settings.about_chef_bio));
     setInnerHtml("comp-lj5iibjh1", toParagraphHtml(body));
     setImage("comp-lx9gc85d", settings.about_banner_image);
     setImage("comp-ljwrefcu", settings.about_portrait_image);
@@ -792,6 +808,7 @@
     const hallandale = locations.find((item) => /hallandale/i.test(item.name || item.city || "")) || locations[1];
 
     setTextBlock("comp-mcjd4ms58__item1", settings.locations_title || "Locations", "h3", "font_3 wixui-rich-text__text");
+    setImage("comp-mcjd4mru__item1", settings.locations_intro_image || "");
 
     if (miami) {
       setLinkTextBlock(
@@ -884,13 +901,16 @@
       return;
     }
 
+    setImage("comp-mackekk1", settings.mimo_hero_image || "");
     setTextEffectsMatrix("comp-mcjeiaz3", settings.miami_label || (miami.city && /miami/i.test(miami.city) ? "Miami" : miami.name));
-    setInnerHtml("comp-macl6c0o", toParagraphHtml(miami.copy || settings.locations_copy));
+    setInnerHtml("comp-macl6c0o", toParagraphHtml(settings.mimo_intro_copy || miami.copy || settings.locations_copy));
     setAnchorHref("comp-mdp2taz6", "/miamimenu", "_self");
     setButtonLabel("comp-mdp2taz6", settings.menu_primary_label || "MENU");
     setTextBlock("comp-mcje1tq4", settings.hours_heading || "HOURS & LOCATION", "p", "font_8 wixui-rich-text__text");
     setInnerHtml("comp-mcje3w0c", toParagraphHtml(miami.hours || "Update in wp-admin"));
     setInnerHtml("comp-mcje52qw", toParagraphHtml(`${miami.address}, ${miami.city}`));
+    setTextBlock("comp-mcjeaao8", settings.happy_hour_heading || "HAPPY HOUR", "p", "font_8 wixui-rich-text__text");
+    setInnerHtml("comp-mcjeaanm", toParagraphHtml(settings.mimo_happy_hour_copy || "Monday-Friday\n4pm-7pm"));
   }
 
   function applyHallandalePage(data) {

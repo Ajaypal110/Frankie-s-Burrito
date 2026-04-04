@@ -1,12 +1,18 @@
 <?php
 $settings = get_option( 'frankies_headless_settings', array() );
 $settings['about_copy'] = "Inspired by our creators Nuno Grullon and Akira van Egmond, Upper East Side MiMo District's favorite Mexican cantina is an exploration of authentic Mexican street food through the lens of Chef Nuno. Sourcing the freshest local produce and highest quality meats and seafood, Uptown 66 has become a standard for quality and consistency for locals and visitors alike. Our atmosphere evolves throughout the day, from lunch and happy hour to late-night dining, while staying grounded in flavor, craft, and consistency.";
+$settings['about_intro_lead'] = 'Inspired by our creators Nuno Grullon and Akira van Egmond, Upper East Side MiMo District&rsquo;s favorite Mexican cantina, is an exploration of authentic Mexican street food through the lens of Chef Nuno. Sourcing the freshest local produce and highest quality meats, and seafood.';
+$settings['about_intro_followup'] = 'Neighborhood favorite, nationwide phenomenon. Don&rsquo;t let awards speak for you, try Uptown 66 and let yourself be the judge.';
 $settings['about_title'] = 'GET TO KNOW US';
+$settings['about_story_copy'] = 'From our hand-pressed tortillas of heirloom corn from Oaxaca, to our award winning Birria made with short-rib, oxtail and beef cheek slow-braised overnight with our selection of Mexican chilis. It only begins there, this diverse menu has many fan favorites all made from scratch. From the notorious steak burrito to our famous loaded nachos layered with house made cheese sauce. Always leave room for dessert, light airy churros dipped in silky chocolate sauce, creamy caramel flan and a tres leches like you&rsquo;ve never had before. Every dish we serve is to showcase our passion for food.';
 $settings['about_primary_image'] = 'https://static.wixstatic.com/media/da4e2b_27d4859a62e64fb08564fef816cd15ef~mv2.jpg/v1/fill/w_2500,h_3125,al_c/da4e2b_27d4859a62e64fb08564fef816cd15ef~mv2.jpg';
 $settings['about_secondary_image'] = 'https://static.wixstatic.com/media/da4e2b_0046467888ae4c36bcb37ea88d6821c4~mv2.jpg/v1/fill/w_147,h_221,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMGL0127_JPG.jpg';
 $settings['press_copy'] = 'Featured coverage for Uptown 66, from Miami food press to national recognition.';
 $settings['locations_title'] = 'Locations - Miami';
 $settings['locations_copy'] = 'Locations in Miami MiMo and Hallandale Atlantic Village. Update every address, menu link, and ordering link from wp-admin.';
+$settings['mimo_intro_copy'] = 'Uptown 66 made its name in Miami’s MiMo District with award-winning tacos and an unmistakable street food soul. Nestled on Biscayne Boulevard, it’s more than just our first home. It’s the heartbeat of the brand. No frills, just fire.';
+$settings['mimo_happy_hour_copy'] = "Monday-Friday\n4pm-7pm";
+$settings['mimo_hero_image'] = 'https://static.wixstatic.com/media/da4e2b_b41c698c3ac24a2ba3b44d624217c546~mv2.jpg/v1/fill/w_160,h_90,al_c,q_80,usm_0.66_1.00_0.01,blur_3,enc_avif,quality_auto/da4e2b_b41c698c3ac24a2ba3b44d624217c546_mv2.jpg';
 update_option( 'frankies_headless_settings', $settings );
 
 $locations = get_posts(

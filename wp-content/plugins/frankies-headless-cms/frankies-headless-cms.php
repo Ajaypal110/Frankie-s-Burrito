@@ -359,7 +359,7 @@ final class Frankies_Headless_CMS {
 	}
 
 	public static function render_setting_field( $args ) {
-		$settings = wp_parse_args( get_option( self::OPTION_KEY, array() ), self::default_settings() );
+		$settings = self::current_settings();
 		$key      = $args['key'];
 		$type     = $args['type'];
 		$value    = $settings[ $key ] ?? '';
@@ -414,7 +414,7 @@ final class Frankies_Headless_CMS {
 	}
 
 	public static function render_home_page() {
-		$settings = wp_parse_args( get_option( self::OPTION_KEY, array() ), self::default_settings() );
+		$settings = self::current_settings();
 		$sections = array(
 			'frankies_headless_branding'    => __( 'Branding', 'frankies-headless-cms' ),
 			'frankies_headless_home_hero'   => __( 'Hero Content', 'frankies-headless-cms' ),
@@ -676,7 +676,6 @@ final class Frankies_Headless_CMS {
 							'logo_image',
 							'hero_left_image',
 							'hero_center_image',
-							'hero_right_image',
 							'skull_image',
 							'gallery_images',
 						),
@@ -697,7 +696,12 @@ final class Frankies_Headless_CMS {
 						'description' => __( 'Exact text fields shown on the About page.', 'frankies-headless-cms' ),
 						'fields'      => array(
 							'about_title',
-							'about_copy',
+							'about_intro_lead',
+							'about_intro_followup',
+							'about_chef_label',
+							'about_chef_heading',
+							'about_chef_bio',
+							'about_story_copy',
 						),
 					),
 					array(
@@ -722,10 +726,17 @@ final class Frankies_Headless_CMS {
 				'description' => __( 'Main content for the Locations route.', 'frankies-headless-cms' ),
 				'field_groups' => array(
 					array(
-						'label'  => __( 'Locations Page', 'frankies-headless-cms' ),
+						'label'  => __( 'Locations Text', 'frankies-headless-cms' ),
 						'fields' => array(
 							'locations_title',
-							'locations_copy',
+							'miami_label',
+							'hallandale_label',
+						),
+					),
+					array(
+						'label'  => __( 'Locations Images', 'frankies-headless-cms' ),
+						'fields' => array(
+							'locations_intro_image',
 							'locations_miami_image',
 							'locations_hallandale_image',
 						),
@@ -804,7 +815,17 @@ final class Frankies_Headless_CMS {
 						'label'  => __( 'Miami Location Content', 'frankies-headless-cms' ),
 						'fields' => array(
 							'miami_label',
+							'mimo_intro_copy',
+							'menu_primary_label',
 							'hours_heading',
+							'happy_hour_heading',
+							'mimo_happy_hour_copy',
+						),
+					),
+					array(
+						'label'  => __( 'Miami Location Image', 'frankies-headless-cms' ),
+						'fields' => array(
+							'mimo_hero_image',
 						),
 					),
 				),
@@ -1108,7 +1129,7 @@ final class Frankies_Headless_CMS {
 
 	public static function sanitize_settings( $input ) {
 		$defaults  = self::default_settings();
-		$current   = wp_parse_args( get_option( self::OPTION_KEY, array() ), $defaults );
+		$current   = self::normalize_settings( wp_parse_args( get_option( self::OPTION_KEY, array() ), $defaults ) );
 		$sanitized = array();
 		$input     = is_array( $input ) ? $input : array();
 
@@ -1138,7 +1159,11 @@ final class Frankies_Headless_CMS {
 			}
 		}
 
-		return $sanitized;
+		if ( isset( $current['about_copy'] ) ) {
+			$sanitized['about_copy'] = $current['about_copy'];
+		}
+
+		return self::normalize_settings( $sanitized );
 	}
 
 	public static function register_rest_routes() {
@@ -1154,7 +1179,7 @@ final class Frankies_Headless_CMS {
 	}
 
 	public static function rest_site_payload() {
-		$settings = wp_parse_args( get_option( self::OPTION_KEY, array() ), self::default_settings() );
+		$settings = self::current_settings();
 
 		$payload = array(
 			'settings'     => array_merge(
@@ -1339,7 +1364,7 @@ final class Frankies_Headless_CMS {
 	}
 
 	private static function press_items_from_settings() {
-		$settings = wp_parse_args( get_option( self::OPTION_KEY, array() ), self::default_settings() );
+		$settings = self::current_settings();
 		$items    = array();
 
 		for ( $index = 1; $index <= 4; $index++ ) {
@@ -2091,7 +2116,12 @@ JS;
 			'skull_image'          => array( 'label' => 'Home skull graphic', 'type' => 'media', 'section' => 'frankies_headless_home_images', 'placeholder' => 'https://...', 'preview' => true ),
 			'gallery_images'       => array( 'label' => 'Home gallery images', 'type' => 'gallery', 'rows' => 7, 'help' => 'Upload or select images, then drag them into the order you want.', 'section' => 'frankies_headless_home_images', 'placeholder' => "https://...\nhttps://...\nhttps://..." ),
 			'about_title'          => array( 'label' => 'About page title', 'type' => 'text', 'section' => 'frankies_headless_about', 'placeholder' => 'GET TO KNOW US' ),
-			'about_copy'           => array( 'label' => 'About page copy', 'type' => 'textarea', 'rows' => 6, 'section' => 'frankies_headless_about', 'placeholder' => 'About page introduction and story.' ),
+			'about_intro_lead'     => array( 'label' => 'About intro paragraph 1', 'type' => 'textarea', 'rows' => 4, 'section' => 'frankies_headless_about', 'placeholder' => 'First introduction paragraph.' ),
+			'about_intro_followup' => array( 'label' => 'About intro paragraph 2', 'type' => 'textarea', 'rows' => 3, 'section' => 'frankies_headless_about', 'placeholder' => 'Second introduction paragraph.' ),
+			'about_chef_label'     => array( 'label' => 'About chef label', 'type' => 'text', 'section' => 'frankies_headless_about', 'placeholder' => 'CHEF NUNO GRULLON:' ),
+			'about_chef_heading'   => array( 'label' => 'About chef heading', 'type' => 'text', 'section' => 'frankies_headless_about', 'placeholder' => 'PASSIONATE CREATIVITY' ),
+			'about_chef_bio'       => array( 'label' => 'About chef bio', 'type' => 'textarea', 'rows' => 6, 'section' => 'frankies_headless_about', 'placeholder' => 'Chef biography and story.' ),
+			'about_story_copy'     => array( 'label' => 'About story paragraph', 'type' => 'textarea', 'rows' => 6, 'section' => 'frankies_headless_about', 'placeholder' => 'Closing About page story paragraph.' ),
 			'about_banner_image'   => array( 'label' => 'About banner image', 'type' => 'media', 'section' => 'frankies_headless_about', 'placeholder' => 'https://...', 'preview' => true ),
 			'about_portrait_image' => array( 'label' => 'About portrait image', 'type' => 'media', 'section' => 'frankies_headless_about', 'placeholder' => 'https://...', 'preview' => true ),
 			'about_primary_image'  => array( 'label' => 'About primary image', 'type' => 'media', 'section' => 'frankies_headless_about', 'placeholder' => 'https://...', 'preview' => true ),
@@ -2114,11 +2144,15 @@ JS;
 			'press_item_4_outlet'  => array( 'label' => 'Press card 4 outlet', 'type' => 'text', 'section' => 'frankies_headless_press_page', 'placeholder' => 'BROKEN PLATE' ),
 			'press_item_4_title'   => array( 'label' => 'Press card 4 title', 'type' => 'textarea', 'rows' => 3, 'section' => 'frankies_headless_press_page', 'placeholder' => 'Press card headline.' ),
 			'press_item_4_url'     => array( 'label' => 'Press card 4 link', 'type' => 'url', 'section' => 'frankies_headless_press_page', 'placeholder' => 'https://example.com/article' ),
-			'locations_title'      => array( 'label' => 'Locations page title', 'type' => 'text', 'section' => 'frankies_headless_locations_page', 'placeholder' => 'Locations - Miami' ),
+			'locations_title'      => array( 'label' => 'Locations card title', 'type' => 'text', 'section' => 'frankies_headless_locations_page', 'placeholder' => 'Locations' ),
 			'locations_copy'       => array( 'label' => 'Locations page intro', 'type' => 'textarea', 'rows' => 4, 'section' => 'frankies_headless_locations_page', 'placeholder' => 'Short intro above the locations list.' ),
+			'locations_intro_image' => array( 'label' => 'Locations intro card image', 'type' => 'media', 'section' => 'frankies_headless_locations_page', 'placeholder' => 'https://...', 'preview' => true ),
 			'locations_miami_image' => array( 'label' => 'Miami location card image', 'type' => 'media', 'section' => 'frankies_headless_locations_page', 'placeholder' => 'https://...', 'preview' => true ),
 			'locations_hallandale_image' => array( 'label' => 'Hallandale location card image', 'type' => 'media', 'section' => 'frankies_headless_locations_page', 'placeholder' => 'https://...', 'preview' => true ),
 			'miami_label'          => array( 'label' => 'Miami location label', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Miami' ),
+			'mimo_intro_copy'      => array( 'label' => 'Miami intro copy', 'type' => 'textarea', 'rows' => 4, 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Intro copy shown above the Miami menu button.' ),
+			'mimo_happy_hour_copy' => array( 'label' => 'Miami happy hour copy', 'type' => 'textarea', 'rows' => 3, 'section' => 'frankies_headless_menu_page_content', 'placeholder' => "Monday-Friday\n4pm-7pm" ),
+			'mimo_hero_image'      => array( 'label' => 'Miami hero image', 'type' => 'media', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'https://...', 'preview' => true ),
 			'hallandale_label'     => array( 'label' => 'Hallandale location label', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Hallandale' ),
 			'hallandale_subtitle'  => array( 'label' => 'Hallandale location subtitle', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Atlantic Village' ),
 			'hours_heading'        => array( 'label' => 'Hours and location heading', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'HOURS & LOCATION' ),
@@ -2170,6 +2204,12 @@ JS;
 			),
 			'about_title'          => 'GET TO KNOW US',
 			'about_copy'           => 'Inspired by our creators Nuno Grullon and Akira van Egmond, Upper East Side MiMo District\'s favorite Mexican cantina is an exploration of authentic Mexican street food through the lens of Chef Nuno. Sourcing the freshest local produce and highest quality meats and seafood, Uptown 66 has become a standard for quality and consistency for locals and visitors alike. Our atmosphere evolves throughout the day, from lunch and happy hour to late-night dining, while staying grounded in flavor, craft, and consistency.',
+			'about_intro_lead'     => 'Inspired by our creators Nuno Grullon and Akira van Egmond, Upper East Side MiMo District&rsquo;s favorite Mexican cantina, is an exploration of authentic Mexican street food through the lens of Chef Nuno. Sourcing the freshest local produce and highest quality meats, and seafood.',
+			'about_intro_followup' => 'Neighborhood favorite, nationwide phenomenon. Don&rsquo;t let awards speak for you, try Uptown 66 and let yourself be the judge.',
+			'about_chef_label'     => 'CHEF NUNO GRULLON:',
+			'about_chef_heading'   => 'PASSIONATE CREATIVITY / FROM THE BRONX TO MIAMI',
+			'about_chef_bio'       => 'The driving force behind Uptown 66 is Dominican born Chef Nuno Grullon. Entering the culinary world at 15 years old, Nuno worked at a wide range of New York City kitchens where he developed his craft, discipline, and point of view. His cooking blends technique, energy, and a deep respect for ingredients, bringing bold flavor and consistency to every service.',
+			'about_story_copy'     => 'From our hand-pressed tortillas of heirloom corn from Oaxaca, to our award winning Birria made with short-rib, oxtail and beef cheek slow-braised overnight with our selection of Mexican chilis. It only begins there, this diverse menu has many fan favorites all made from scratch. From the notorious steak burrito to our famous loaded nachos layered with house made cheese sauce. Always leave room for dessert, light airy churros dipped in silky chocolate sauce, creamy caramel flan and a tres leches like you&rsquo;ve never had before. Every dish we serve is to showcase our passion for food.',
 			'about_banner_image'   => 'https://static.wixstatic.com/media/da4e2b_71a8a0efdfd7425da73e0202e531a5b3~mv2.jpg/v1/fill/w_147,h_98,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/3Q5A0140.jpg',
 			'about_portrait_image' => 'https://static.wixstatic.com/media/da4e2b_e103d357da0a4916b06677b312345181_mv2.png/v1/crop/x_112,y_0,w_345,h_480/fill/w_86,h_120,al_c,q_85,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMG_2459_heic.png',
 			'about_primary_image'  => 'https://static.wixstatic.com/media/da4e2b_f3b6ad77ffc44f4497ea6512d9897c46_mv2.jpg/v1/fill/w_147,h_98,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMGL0409_JPG.jpg',
@@ -2194,9 +2234,13 @@ JS;
 			'press_item_4_url'     => 'https://www.brokenpalate.com/p/a-miami-taco-place-is-crowned-number',
 			'locations_title'      => 'Locations - Miami',
 			'locations_copy'       => 'Locations in Miami MiMo and Hallandale Atlantic Village. Update every address, menu link, and ordering link from wp-admin.',
+			'locations_intro_image' => '',
 			'locations_miami_image' => '',
 			'locations_hallandale_image' => '',
 			'miami_label'          => 'Miami',
+			'mimo_intro_copy'      => 'Uptown 66 made its name in Miami’s MiMo District with award-winning tacos and an unmistakable street food soul. Nestled on Biscayne Boulevard, it’s more than just our first home. It’s the heartbeat of the brand. No frills, just fire.',
+			'mimo_happy_hour_copy' => "Monday-Friday\n4pm-7pm",
+			'mimo_hero_image'      => 'https://static.wixstatic.com/media/da4e2b_b41c698c3ac24a2ba3b44d624217c546~mv2.jpg/v1/fill/w_160,h_90,al_c,q_80,usm_0.66_1.00_0.01,blur_3,enc_avif,quality_auto/da4e2b_b41c698c3ac24a2ba3b44d624217c546_mv2.jpg',
 			'hallandale_label'     => 'Hallandale',
 			'hallandale_subtitle'  => 'Atlantic Village',
 			'hours_heading'        => 'HOURS & LOCATION',
@@ -2266,6 +2310,67 @@ JS;
 			'miami_menu_markup'    => '',
 			'hallandale_menu_markup' => '',
 		);
+	}
+
+	private static function current_settings() {
+		return self::normalize_settings( wp_parse_args( get_option( self::OPTION_KEY, array() ), self::default_settings() ) );
+	}
+
+	private static function normalize_settings( $settings ) {
+		$settings = is_array( $settings ) ? $settings : array();
+
+		if (
+			( empty( $settings['about_intro_lead'] ) || empty( $settings['about_intro_followup'] ) || empty( $settings['about_story_copy'] ) )
+			&& ! empty( $settings['about_copy'] )
+		) {
+			$legacy_paragraphs = preg_split( '/\r\n\r\n|\n\n|\r\r/', trim( (string) $settings['about_copy'] ) );
+			$legacy_paragraphs = array_values( array_filter( array_map( 'trim', (array) $legacy_paragraphs ) ) );
+
+			if ( count( $legacy_paragraphs ) < 3 ) {
+				$legacy_paragraphs = preg_split( '/(?<=[.?!])\s+(?=[A-Z])/', trim( (string) $settings['about_copy'] ) );
+				$legacy_paragraphs = array_values( array_filter( array_map( 'trim', (array) $legacy_paragraphs ) ) );
+			}
+
+			if ( empty( $settings['about_intro_lead'] ) ) {
+				$settings['about_intro_lead'] = $legacy_paragraphs[0] ?? '';
+			}
+
+			if ( empty( $settings['about_intro_followup'] ) ) {
+				$settings['about_intro_followup'] = $legacy_paragraphs[1] ?? '';
+			}
+
+			if ( empty( $settings['about_story_copy'] ) ) {
+				$settings['about_story_copy'] = implode(
+					"\n\n",
+					array_values(
+						array_filter(
+							array_slice( $legacy_paragraphs, 2 ),
+							static function ( $paragraph ) {
+								return '' !== $paragraph;
+							}
+						)
+					)
+				);
+			}
+		}
+
+		$settings['about_copy'] = implode(
+			"\n\n",
+			array_values(
+				array_filter(
+					array(
+						$settings['about_intro_lead'] ?? '',
+						$settings['about_intro_followup'] ?? '',
+						$settings['about_story_copy'] ?? '',
+					),
+					static function ( $paragraph ) {
+						return '' !== trim( (string) $paragraph );
+					}
+				)
+			)
+		);
+
+		return $settings;
 	}
 
 	private static function seed_defaults() {
