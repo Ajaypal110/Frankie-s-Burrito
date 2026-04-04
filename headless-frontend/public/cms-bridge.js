@@ -13,6 +13,14 @@
     "hallandale.html": "/hallandale",
     "hallandalemenu.html": "/hallandalemenu",
   };
+  const HOME_SKULL_IDS = ["comp-lz8p89zm", "comp-lz8psxby", "comp-lz8pt0qw", "comp-lz8pt7jf"];
+  const HOME_TESTIMONIAL_IDS = [
+    ["comp-ljvltvc712", "comp-ljvltvc612"],
+    ["comp-ljvltn2r14", "comp-ljvltn2r"],
+    ["comp-ljvlswmt", "comp-ljvlswms"],
+  ];
+  const FALLBACK_SKULL_URL =
+    "https://static.wixstatic.com/media/da4e2b_88a856d8e39542a1aba400685cd3a2d0~mv2.png/v1/fill/w_55,h_77,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/SKULL.png";
   let activeLogoImage = "";
   let activeLogoAlt = "Logo";
   let activeLogoReadyPromise = Promise.resolve();
@@ -37,12 +45,12 @@
     document.documentElement.removeAttribute("data-cms-logo-ready");
   }
 
-  function toParagraphHtml(text) {
+  function toParagraphHtml(text, pClass = "font_8 wixui-rich-text__text", spanClass = "wixui-rich-text__text") {
     return String(text || "")
       .split(/\n+/)
       .map((line) => line.trim())
       .filter(Boolean)
-      .map((line) => `<p class="font_8 wixui-rich-text__text"><span class="wixui-rich-text__text">${escapeHtml(line)}</span></p>`)
+      .map((line) => `<p class="${pClass}"><span class="${spanClass}">${escapeHtml(line)}</span></p>`)
       .join("");
   }
 
@@ -199,6 +207,18 @@
     }
   }
 
+  function forceVisible(node, display = "block") {
+    if (!node) {
+      return;
+    }
+
+    node.hidden = false;
+    node.removeAttribute("hidden");
+    node.style.display = display;
+    node.style.visibility = "visible";
+    node.style.opacity = "1";
+  }
+
   function setButtonLabel(id, label) {
     const root = document.getElementById(id);
     const labelNode = root && root.querySelector(".w4Vxx6");
@@ -213,7 +233,12 @@
     const wowImage = root && root.querySelector("wow-image");
     const normalizedSrc = normalizeAssetUrl(src);
     if (img && normalizedSrc) {
-      const isWordPressMedia = /\/wp-content\//i.test(normalizedSrc);
+      if (wowImage) {
+        wowImage.removeAttribute("data-image-info");
+        wowImage.dataset.imageInfo = "";
+      }
+      root.querySelectorAll("source").forEach((source) => source.remove());
+
       img.src = normalizedSrc;
       img.srcset = "";
       img.removeAttribute("srcset");
@@ -222,34 +247,10 @@
       img.setAttribute("data-load-done", "");
       img.style.opacity = "1";
       img.style.display = "block";
-      root.querySelectorAll("source").forEach((source) => {
-        if (isWordPressMedia) {
-          source.srcset = "";
-          source.removeAttribute("srcset");
-          source.removeAttribute("srcSet");
-          return;
-        }
-        source.srcset = normalizedSrc;
-        source.setAttribute("srcset", normalizedSrc);
-      });
-
-      if (!isWordPressMedia && wowImage && wowImage.dataset.imageInfo) {
-        try {
-          const imageInfo = JSON.parse(wowImage.dataset.imageInfo);
-          if (imageInfo && imageInfo.imageData) {
-            imageInfo.imageData.uri = normalizedSrc;
-            imageInfo.imageData.name = normalizedSrc.split("/").pop() || "";
-            wowImage.dataset.imageInfo = JSON.stringify(imageInfo);
-            wowImage.setAttribute("data-image-info", JSON.stringify(imageInfo));
-          }
-        } catch (error) {
-          // Ignore malformed legacy data-image-info payloads and keep the direct src update.
-        }
-      }
 
       root.style.opacity = "1";
       root.removeAttribute("hidden");
-      if (!isWordPressMedia && wowImage && typeof wowImage.reLayout === "function") {
+      if (wowImage && typeof wowImage.reLayout === "function") {
         requestAnimationFrame(() => wowImage.reLayout());
       }
     }
@@ -257,6 +258,39 @@
 
   function setImages(ids, src) {
     (ids || []).forEach((id) => setImage(id, src));
+  }
+
+  function setImageWithFallback(id, src, fallbackSrc, altText) {
+    const normalizedPrimarySrc = normalizeAssetUrl(src);
+    const normalizedFallbackSrc = normalizeAssetUrl(fallbackSrc);
+
+    setImage(id, normalizedPrimarySrc || normalizedFallbackSrc);
+
+    const root = document.getElementById(id);
+    const img = root && root.querySelector("img");
+    if (!root || !img) {
+      return;
+    }
+
+    forceVisible(root);
+    forceVisible(root.closest(".wixui-box"));
+
+    img.alt = altText || img.alt || "Skull icon";
+    img.style.objectFit = "contain";
+    img.style.objectPosition = "center center";
+    img.style.filter = "brightness(0.18)";
+
+    if (normalizedFallbackSrc) {
+      img.addEventListener(
+        "error",
+        () => {
+          if (img.src !== normalizedFallbackSrc) {
+            img.src = normalizedFallbackSrc;
+          }
+        },
+        { once: true }
+      );
+    }
   }
 
   function fitLogoImage(root, img, idSuffix) {
@@ -430,6 +464,89 @@
     return `<section data-cms-home-testimonials="true" style="max-width:980px;margin:0 auto;padding:48px 24px 72px;color:#2f160f;"><h2 style="margin:0 0 18px;font-size:32px;letter-spacing:.08em;text-transform:uppercase;">TABLE TALK</h2>${items}</section>`;
   }
 
+  function buildReferenceSkullRowMarkup(skullSrc) {
+    const normalizedSrc = normalizeAssetUrl(skullSrc || FALLBACK_SKULL_URL) || FALLBACK_SKULL_URL;
+    return `<div data-cms-skull-row="true" style="display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;margin:18px 0 24px;">${new Array(4)
+      .fill("")
+      .map(
+        () =>
+          `<img src="${escapeHtml(normalizedSrc)}" alt="Skull icon" style="display:block;width:55px;height:77px;object-fit:contain;filter:brightness(.18);">`
+      )
+      .join("")}</div>`;
+  }
+
+  function mountReferenceSkullRow(skullSrc) {
+    const container =
+      document.querySelector("#comp-ljgxfu44 > .comp-ljgxfu44-container") ||
+      document.querySelector("#comp-ljgxfu44 .comp-ljgxfu44-container");
+
+    if (!container) {
+      return;
+    }
+
+    HOME_SKULL_IDS.forEach((id) => {
+      const node = document.getElementById(id);
+      if (node) {
+        node.style.display = "none";
+        node.style.visibility = "hidden";
+        node.style.opacity = "0";
+      }
+    });
+
+    const existing = container.querySelector("[data-cms-skull-row='true']");
+    const markup = buildReferenceSkullRowMarkup(skullSrc);
+
+    if (existing) {
+      existing.outerHTML = markup;
+      return;
+    }
+
+    container.insertAdjacentHTML("afterbegin", markup);
+  }
+
+  function isRendered(node) {
+    if (!node) {
+      return false;
+    }
+
+    const styles = window.getComputedStyle(node);
+    if (
+      styles.display === "none" ||
+      styles.visibility === "hidden" ||
+      styles.opacity === "0"
+    ) {
+      return false;
+    }
+
+    const rect = node.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  }
+
+  function ensureHomeTestimonialsVisible(testimonials) {
+    const quoteNodes = HOME_TESTIMONIAL_IDS.map(([quoteId]) => document.getElementById(quoteId)).filter(Boolean);
+    const anyRendered = quoteNodes.some((node) => isRendered(node));
+
+    HOME_TESTIMONIAL_IDS.forEach(([quoteId, authorId]) => {
+      const quoteNode = document.getElementById(quoteId);
+      const authorNode = document.getElementById(authorId);
+
+      [quoteNode, authorNode].forEach((node) => {
+        if (!node) {
+          return;
+        }
+
+        forceVisible(node);
+        forceVisible(node.closest(".wixui-rich-text"));
+        forceVisible(node.closest(".wixui-box"));
+        node.style.color = node === quoteNode ? "#2f160f" : "#7a6257";
+      });
+    });
+
+    if (!anyRendered) {
+      ensureHomeTestimonialsFallback(testimonials);
+    }
+  }
+
   function ensureHomeTestimonialsFallback(testimonials) {
     const main = document.querySelector("main[data-main-content-parent='true']");
     if (!main || !testimonials || !testimonials.length) {
@@ -599,6 +716,7 @@
     const settings = data.settings || {};
     const testimonials = data.testimonials || [];
     const galleryImages = settings.gallery_images || [];
+    const skullImage = settings.skull_image || FALLBACK_SKULL_URL;
 
     const rawMarkupApplied = applyRawMainMarkup(settings.home_main_markup);
 
@@ -612,10 +730,9 @@
     setImage("comp-lx95a8rh", settings.hero_left_image);
     setImage("comp-lx9904sy", settings.hero_center_image);
     setImage("comp-lz8sc600", settings.hero_right_image);
-    setImages(
-      ["comp-lz8p89zm", "comp-lz8psxby", "comp-lz8pt0qw", "comp-lz8pt7jf"],
-      settings.skull_image
-    );
+    HOME_SKULL_IDS.forEach((id) => {
+      setImageWithFallback(id, skullImage, FALLBACK_SKULL_URL, "Skull icon");
+    });
 
     [
       "comp-lx9cedqk",
@@ -626,28 +743,23 @@
       setImage(id, galleryImages[index] || "");
     });
 
-    const testimonialNodes = [
-      ["comp-ljvltvc712", "comp-ljvltvc612"],
-      ["comp-ljvltn2r14", "comp-ljvltn2r"],
-      ["comp-ljvlswmt", "comp-ljvlswms"],
-    ];
-
-    testimonialNodes.forEach(([quoteId, authorId], index) => {
+    HOME_TESTIMONIAL_IDS.forEach(([quoteId, authorId], index) => {
       const item = testimonials[index];
       if (!item) {
         return;
       }
       setInnerHtml(
         quoteId,
-        `<p class="font_8 wixui-rich-text__text"><span class="wixui-rich-text__text">&quot;${escapeHtml(
-          item.quote
-        )}&quot;</span></p>`
+        toParagraphHtml(`"${item.quote}"`, "font_8 wixui-rich-text__text")
       );
       setInnerHtml(
         authorId,
-        `<p class="font_9 wixui-rich-text__text">- ${escapeHtml(item.author || item.title || "")}</p>`
+        toParagraphHtml(`- ${item.author || item.title || ""}`, "font_9 wixui-rich-text__text")
       );
     });
+
+    mountReferenceSkullRow(skullImage);
+    ensureHomeTestimonialsVisible(testimonials);
 
     if (rawMarkupApplied) {
       ensureHomeTestimonialsFallback(testimonials);
