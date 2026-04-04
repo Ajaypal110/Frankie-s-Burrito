@@ -679,7 +679,7 @@
 
   function buildReferenceSkullRowMarkup(skullSrc) {
     const normalizedSrc = normalizeAssetUrl(skullSrc || FALLBACK_SKULL_URL) || FALLBACK_SKULL_URL;
-    return `<div data-cms-skull-row="true" style="display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;margin:120px 64px;padding:0 32px;">${new Array(4)
+    return `<div data-cms-skull-row="true" style="display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;margin:70px 64px;padding:0 32px;">${new Array(4)
       .fill("")
       .map(
         () =>
@@ -697,12 +697,12 @@
     style.id = "cms-home-skull-layout-styles";
     style.textContent = `
       #comp-ljgxfk3f{
-        min-height:450px !important;
+        min-height:350px !important;
         height:auto !important;
         overflow:hidden !important;
       }
       #comp-ljgxfk3f .comp-ljgxfk3f-container{
-        min-height:450px !important;
+        min-height:350px !important;
         grid-template-rows:minmax(220px, auto) minmax(180px, auto) !important;
         padding-bottom:0 !important;
         overflow:hidden !important;
@@ -759,10 +759,10 @@
       ).join("")}
       @media screen and (max-width: 750px){
         #comp-ljgxfk3f{
-          min-height:300px !important;
+          min-height:200px !important;
         }
         #comp-ljgxfk3f .comp-ljgxfk3f-container{
-          min-height:300px !important;
+          min-height:200px !important;
           grid-template-rows:minmax(120px, auto) minmax(60px, auto) minmax(120px, auto) !important;
         }
         #comp-ljgxfu44 .comp-ljgxfu44-container{
