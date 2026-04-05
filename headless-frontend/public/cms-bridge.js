@@ -658,84 +658,6 @@
     return true;
   }
 
-  function getMenuSlotNode(id) {
-    const node = document.getElementById(id);
-    if (!node) {
-      return null;
-    }
-
-    return node.parentElement && node.parentElement.id ? node.parentElement : node;
-  }
-
-  function stripNodeIds(root) {
-    if (!root || root.nodeType !== 1) {
-      return;
-    }
-
-    root.removeAttribute("id");
-    root.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
-  }
-
-  function setRichTextCloneContent(root, text) {
-    if (!root) {
-      return;
-    }
-
-    const richTextNode =
-      root.matches(".wixui-rich-text, [data-testid='richTextElement']")
-        ? root
-        : root.querySelector(".wixui-rich-text, [data-testid='richTextElement']");
-
-    if (!richTextNode) {
-      return;
-    }
-
-    const contentNode = richTextNode.querySelector("h1, h2, h3, p") || richTextNode.firstElementChild;
-    const tagName = contentNode && contentNode.tagName ? contentNode.tagName.toLowerCase() : "p";
-    const className = contentNode && contentNode.className ? contentNode.className : "font_8 wixui-rich-text__text";
-
-    richTextNode.innerHTML = `<${tagName} class="${className}"><span class="wixui-rich-text__text">${formatRichTextContent(
-      text
-    )}</span></${tagName}>`;
-  }
-
-  function appendOverflowMenuPairs(slotPairs, items, formatter) {
-    if (!Array.isArray(slotPairs) || !Array.isArray(items) || items.length <= slotPairs.length) {
-      return;
-    }
-
-    const lastPair = slotPairs[slotPairs.length - 1];
-    const templateNameNode = getMenuSlotNode(lastPair.nameId);
-    const templateDetailNode = getMenuSlotNode(lastPair.detailId);
-    if (!templateNameNode || !templateDetailNode || !templateDetailNode.parentElement) {
-      return;
-    }
-
-    const parent = templateDetailNode.parentElement;
-    parent
-      .querySelectorAll("[data-cms-clone='menu-overflow']")
-      .forEach((node) => node.parentElement && node.parentElement.removeChild(node));
-
-    let cursor = templateDetailNode;
-
-    items.slice(slotPairs.length).forEach((item) => {
-      const nameClone = templateNameNode.cloneNode(true);
-      const detailClone = templateDetailNode.cloneNode(true);
-
-      stripNodeIds(nameClone);
-      stripNodeIds(detailClone);
-      nameClone.setAttribute("data-cms-clone", "menu-overflow");
-      detailClone.setAttribute("data-cms-clone", "menu-overflow");
-
-      setRichTextCloneContent(nameClone, item.name || "");
-      setRichTextCloneContent(detailClone, formatter(item));
-
-      parent.insertBefore(nameClone, cursor.nextSibling);
-      parent.insertBefore(detailClone, nameClone.nextSibling);
-      cursor = detailClone;
-    });
-  }
-
   function buildHomeTestimonialsMarkup(testimonials) {
     const items = (testimonials || [])
       .slice(0, 3)
@@ -1540,8 +1462,7 @@
           settings.agoura_menu_image_5,
         ].filter(Boolean);
 
-    const readSectionItems = (sections) =>
-      (sections || []).flatMap((section) => (section && Array.isArray(section.items) ? section.items : []));
+    const readSectionItems = (sections) => ((sections || [])[0] && (sections || [])[0].items) || [];
     const itemLine = (item) => {
       if (!item) {
         return "";
@@ -1644,15 +1565,6 @@
     setRichTextBlock("comp-lxwdjk51", itemLine(burritos[1]) || "Crispy Potatoes, Queso Mixto, Chipotle Crema, Pico, Guacamole\n15");
     setRichTextBlock("comp-m1gnvxlc", burritos[2]?.name || "SHRIMP BURRITO");
     setRichTextBlock("comp-m1gnvxiz", itemLine(burritos[2]) || "Red Rice, Cilantro Crema, Pico, Guacamole\n16");
-    appendOverflowMenuPairs(
-      [
-        { nameId: "comp-lxwdhgm5", detailId: "comp-lxwdhgs2" },
-        { nameId: "comp-lxwdjk9z", detailId: "comp-lxwdjk51" },
-        { nameId: "comp-m1gnvxlc", detailId: "comp-m1gnvxiz" },
-      ],
-      burritos,
-      itemLine
-    );
 
     setRichTextBlock("comp-lxwfb3bd", settings.agoura_menu_horchata_label || "HOMEMADE");
     setRichTextBlock("comp-lxwfcxhy", settings.agoura_menu_horchata_price || "6");
