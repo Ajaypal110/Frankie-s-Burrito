@@ -712,19 +712,22 @@
       return;
     }
 
+    const normalizedText = text || "";
+    root.style.display = normalizedText ? "" : "none";
+
     const sourceContentNode =
       (sourceRichTextNode && (sourceRichTextNode.querySelector("h1, h2, h3, p") || sourceRichTextNode.firstElementChild)) ||
       richTextNode.querySelector("h1, h2, h3, p") ||
       richTextNode.firstElementChild;
 
     if (!sourceContentNode) {
-      richTextNode.textContent = text || "";
+      richTextNode.textContent = normalizedText;
       return;
     }
 
     const contentClone = sourceContentNode.cloneNode(true);
     copyComputedStyles(sourceContentNode, contentClone);
-    const normalizedHtml = formatRichTextContent(text || "");
+    const normalizedHtml = formatRichTextContent(normalizedText);
     const firstSpan = contentClone.querySelector(".wixui-rich-text__text");
 
     if (firstSpan) {
@@ -1573,8 +1576,29 @@
           settings.agoura_menu_image_5,
         ].filter(Boolean);
 
-    const readSectionItems = (sections) =>
-      (sections || []).flatMap((section) => (section && Array.isArray(section.items) ? section.items : []));
+    const readSectionEntries = (sections) => {
+      const normalizedSections = Array.isArray(sections) ? sections : [];
+
+      return normalizedSections.flatMap((section, sectionIndex) => {
+        if (!section || !Array.isArray(section.items)) {
+          return [];
+        }
+
+        const entries = [];
+        const title = section.title ? String(section.title).trim() : "";
+
+        if (sectionIndex > 0 && title) {
+          entries.push({
+            isSectionTitle: true,
+            name: title,
+            price: "",
+            description: "",
+          });
+        }
+
+        return entries.concat(section.items);
+      });
+    };
     const itemLine = (item) => {
       if (!item) {
         return "";
@@ -1591,13 +1615,13 @@
       return [item.name, item.price].filter(Boolean).join(" ");
     };
 
-    const appetizers = readSectionItems(settings.agoura_menu_appetizers);
-    const happyHourItems = readSectionItems(settings.agoura_menu_happy_hour_items);
-    const beverages = readSectionItems(settings.agoura_menu_beverages);
-    const tacos = readSectionItems(settings.agoura_menu_tacos);
-    const specialties = readSectionItems(settings.agoura_menu_specialties);
-    const burritos = readSectionItems(settings.agoura_menu_burritos);
-    const desserts = readSectionItems(settings.agoura_menu_desserts);
+    const appetizers = readSectionEntries(settings.agoura_menu_appetizers);
+    const happyHourItems = readSectionEntries(settings.agoura_menu_happy_hour_items);
+    const beverages = readSectionEntries(settings.agoura_menu_beverages);
+    const tacos = readSectionEntries(settings.agoura_menu_tacos);
+    const specialties = readSectionEntries(settings.agoura_menu_specialties);
+    const burritos = readSectionEntries(settings.agoura_menu_burritos);
+    const desserts = readSectionEntries(settings.agoura_menu_desserts);
 
     setRichTextBlock("comp-lxwb31ei", settings.menu_page_title || "MENU");
     setInnerHtml("comp-lxwb87gt", toParagraphHtml(locationLine));
