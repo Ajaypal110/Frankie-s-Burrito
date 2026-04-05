@@ -664,7 +664,7 @@
       return null;
     }
 
-    return node.parentElement && node.parentElement.id ? node.parentElement : node;
+    return node;
   }
 
   function stripNodeIds(root) {
@@ -676,7 +676,25 @@
     root.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
   }
 
-  function setRichTextCloneContent(root, text) {
+  function copyComputedStyles(source, target) {
+    if (!source || !target || source.nodeType !== 1 || target.nodeType !== 1) {
+      return;
+    }
+
+    const style = window.getComputedStyle(source);
+    const inline = Array.from(style).map((name) => `${name}:${style.getPropertyValue(name)};`).join("");
+    target.setAttribute("style", inline);
+
+    const sourceChildren = Array.from(source.children || []);
+    const targetChildren = Array.from(target.children || []);
+    const count = Math.min(sourceChildren.length, targetChildren.length);
+
+    for (let index = 0; index < count; index += 1) {
+      copyComputedStyles(sourceChildren[index], targetChildren[index]);
+    }
+  }
+
+  function setRichTextCloneContent(root, text, sourceRoot) {
     if (!root) {
       return;
     }
@@ -685,18 +703,38 @@
       root.matches(".wixui-rich-text, [data-testid='richTextElement']")
         ? root
         : root.querySelector(".wixui-rich-text, [data-testid='richTextElement']");
+    const sourceRichTextNode =
+      sourceRoot && (sourceRoot.matches(".wixui-rich-text, [data-testid='richTextElement']")
+        ? sourceRoot
+        : sourceRoot.querySelector(".wixui-rich-text, [data-testid='richTextElement']"));
 
     if (!richTextNode) {
       return;
     }
 
-    const contentNode = richTextNode.querySelector("h1, h2, h3, p") || richTextNode.firstElementChild;
-    const tagName = contentNode && contentNode.tagName ? contentNode.tagName.toLowerCase() : "p";
-    const className = contentNode && contentNode.className ? contentNode.className : "font_8 wixui-rich-text__text";
+    const sourceContentNode =
+      (sourceRichTextNode && (sourceRichTextNode.querySelector("h1, h2, h3, p") || sourceRichTextNode.firstElementChild)) ||
+      richTextNode.querySelector("h1, h2, h3, p") ||
+      richTextNode.firstElementChild;
 
-    richTextNode.innerHTML = `<${tagName} class="${className}"><span class="wixui-rich-text__text">${formatRichTextContent(
-      text
-    )}</span></${tagName}>`;
+    if (!sourceContentNode) {
+      richTextNode.textContent = text || "";
+      return;
+    }
+
+    const contentClone = sourceContentNode.cloneNode(true);
+    copyComputedStyles(sourceContentNode, contentClone);
+    const normalizedHtml = formatRichTextContent(text || "");
+    const firstSpan = contentClone.querySelector(".wixui-rich-text__text");
+
+    if (firstSpan) {
+      firstSpan.innerHTML = normalizedHtml;
+    } else {
+      contentClone.innerHTML = normalizedHtml;
+    }
+
+    richTextNode.innerHTML = "";
+    richTextNode.appendChild(contentClone);
   }
 
   function appendOverflowMenuGroupClones(cloneKey, visibleCount, templateIds, items, renderGroup) {
@@ -721,9 +759,10 @@
 
       templateNodes.forEach((templateNode, nodeIndex) => {
         const clone = templateNode.cloneNode(true);
+        copyComputedStyles(templateNode, clone);
         stripNodeIds(clone);
         clone.setAttribute("data-cms-clone", cloneKey);
-        setRichTextCloneContent(clone, contentList[nodeIndex] || "");
+        setRichTextCloneContent(clone, contentList[nodeIndex] || "", templateNode);
         parent.insertBefore(clone, cursor.nextSibling);
         cursor = clone;
       });
@@ -1684,6 +1723,12 @@
     setMenuImage("comp-lxwdg80k", menuImages[2]);
     setMenuImage("comp-lxwfa3qt", menuImages[3]);
     setMenuImage("comp-m2ujhnhk", menuImages[4]);
+
+    const skullImage = document.getElementById("comp-m2ujhnhk");
+    if (skullImage) {
+      skullImage.style.display = "none";
+      skullImage.style.visibility = "hidden";
+    }
   }
 
   function clearPendingState() {
