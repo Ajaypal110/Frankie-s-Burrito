@@ -616,20 +616,6 @@
     )}</p>${galleryMarkup}${sectionHtml}</section>`;
   }
 
-  function buildAgouraDynamicMenuSections(settings, sectionItems) {
-    const sectionConfigs = [
-      { title: settings.agoura_menu_happy_hour_title || "Happy Hour", items: sectionItems.happyHourItems || [] },
-      { title: settings.agoura_menu_beverages_title || "Beverages", items: sectionItems.beverages || [] },
-      { title: "Appetizers", items: sectionItems.appetizers || [] },
-      { title: "Tacos", items: sectionItems.tacos || [] },
-      { title: "Specialties", items: sectionItems.specialties || [] },
-      { title: "Burritos", items: sectionItems.burritos || [] },
-      { title: settings.agoura_menu_desserts_title || "Desserts", items: sectionItems.desserts || [] },
-    ];
-
-    return sectionConfigs.filter((section) => Array.isArray(section.items) && section.items.length > 0);
-  }
-
   function rewriteInternalLinks() {
     document.querySelectorAll("a[href]").forEach((anchor) => {
       const href = anchor.getAttribute("href");
@@ -1500,36 +1486,6 @@
     const specialties = readSectionItems(settings.agoura_menu_specialties);
     const burritos = readSectionItems(settings.agoura_menu_burritos);
     const desserts = readSectionItems(settings.agoura_menu_desserts);
-
-    const exceedsStaticLayout =
-      appetizers.length > 5 ||
-      happyHourItems.length > 3 ||
-      beverages.length > 5 ||
-      tacos.length > 4 ||
-      specialties.length > 2 ||
-      burritos.length > 3 ||
-      desserts.length > 3;
-
-    if (exceedsStaticLayout) {
-      applyRawMainMarkup(
-        buildAgouraMenuPageMarkup(
-          settings.menu_page_title || "MENU",
-          settings.menu_page_brand || "UPTOWN 66",
-          locationLine,
-          menuImages,
-          buildAgouraDynamicMenuSections(settings, {
-            appetizers,
-            happyHourItems,
-            beverages,
-            tacos,
-            specialties,
-            burritos,
-            desserts,
-          })
-        )
-      );
-      return;
-    }
 
     setRichTextBlock("comp-lxwb31ei", settings.menu_page_title || "MENU");
     setInnerHtml("comp-lxwb87gt", toParagraphHtml(locationLine));
