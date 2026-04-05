@@ -992,43 +992,47 @@
       return;
     }
 
-    menuRoot.querySelectorAll(".wixui-vertical-menu__submenu [data-testid='linkElement']").forEach((node) => {
-      if (!node || node.tagName === "A" || node.dataset.cmsLinkBound === "true") {
+    menuRoot.querySelectorAll(".wixui-vertical-menu__submenu .wixui-vertical-menu__item").forEach((item) => {
+      const labelNode = item.querySelector("[data-testid='linkElement']");
+      const wrapperNode = item.querySelector("[data-testid='itemWrapper']");
+      const clickableNode = wrapperNode || labelNode;
+
+      if (!labelNode || !clickableNode || labelNode.tagName === "A" || clickableNode.dataset.cmsLinkBound === "true") {
         return;
       }
 
-      const item = node.closest(".wixui-vertical-menu__item");
       const submenu = item && item.closest(".wixui-vertical-menu__submenu");
       const parentItem = submenu && submenu.closest(".wixui-vertical-menu__item");
       const parentLabelNode =
         parentItem &&
         parentItem.querySelector(":scope > [data-testid='itemWrapper'] [data-testid='linkElement']");
-      const href = resolveMobileMenuHref(node.textContent, parentLabelNode && parentLabelNode.textContent);
+      const href = resolveMobileMenuHref(labelNode.textContent, parentLabelNode && parentLabelNode.textContent);
 
       if (!href) {
         return;
       }
 
-      node.setAttribute("data-cms-href", href);
-      node.setAttribute("role", "link");
-      node.tabIndex = 0;
-      node.style.cursor = "pointer";
+      clickableNode.setAttribute("data-cms-href", href);
+      clickableNode.setAttribute("role", "link");
+      clickableNode.tabIndex = 0;
+      clickableNode.style.cursor = "pointer";
 
       const navigate = (event) => {
         if (event) {
           event.preventDefault();
+          event.stopPropagation();
         }
         closeMenu();
         window.location.assign(href);
       };
 
-      node.addEventListener("click", navigate);
-      node.addEventListener("keydown", (event) => {
+      clickableNode.addEventListener("click", navigate);
+      clickableNode.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
           navigate(event);
         }
       });
-      node.dataset.cmsLinkBound = "true";
+      clickableNode.dataset.cmsLinkBound = "true";
     });
   }
 
@@ -1087,17 +1091,42 @@
       }
     });
 
+    const toggleExpandableItem = (toggle, event) => {
+      if (event) {
+        event.preventDefault();
+      }
+      const item = toggle.closest(".wixui-vertical-menu__item");
+      if (!item) {
+        return;
+      }
+      const expanded = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", expanded ? "false" : "true");
+      item.classList.toggle("hGjOas", !expanded);
+    };
+
     menuRoot.querySelectorAll("[data-testid='expandablemenu-toggle']").forEach((toggle) => {
       toggle.addEventListener("click", (event) => {
-        event.preventDefault();
-        const item = toggle.closest(".wixui-vertical-menu__item");
-        if (!item) {
-          return;
-        }
-        const expanded = toggle.getAttribute("aria-expanded") === "true";
-        toggle.setAttribute("aria-expanded", expanded ? "false" : "true");
-        item.classList.toggle("hGjOas", !expanded);
+        toggleExpandableItem(toggle, event);
       });
+
+      const item = toggle.closest(".wixui-vertical-menu__item");
+      const wrapper = item && item.querySelector(":scope > [data-testid='itemWrapper']");
+      const labelNode = wrapper && wrapper.querySelector("[data-testid='linkElement']");
+
+      if (wrapper && labelNode && labelNode.tagName !== "A" && wrapper.dataset.cmsToggleBound !== "true") {
+        wrapper.style.cursor = "pointer";
+        wrapper.setAttribute("role", "button");
+        wrapper.tabIndex = 0;
+        wrapper.addEventListener("click", (event) => {
+          toggleExpandableItem(toggle, event);
+        });
+        wrapper.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            toggleExpandableItem(toggle, event);
+          }
+        });
+        wrapper.dataset.cmsToggleBound = "true";
+      }
     });
 
     bindMobileMenuVirtualLinks(menuRoot, closeMenu);
