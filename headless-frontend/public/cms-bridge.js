@@ -766,75 +766,10 @@
         stripNodeIds(clone);
         clone.setAttribute("data-cms-clone", cloneKey);
         setRichTextCloneContent(clone, contentList[nodeIndex] || "", templateNode);
-
-        if (item && item.isSectionTitle) {
-          if (nodeIndex === 0) {
-            clone.setAttribute("data-cms-section-title", "true");
-            clone.style.marginTop = "32px";
-            clone.style.marginBottom = "6px";
-          } else {
-            clone.style.display = "none";
-          }
-        }
-
         parent.insertBefore(clone, cursor.nextSibling);
         cursor = clone;
       });
     });
-  }
-
-  function reflowMenuColumn(sectionConfigs, gap = 24) {
-    const configs = Array.isArray(sectionConfigs) ? sectionConfigs : [];
-    let previousBottom = null;
-
-    configs.forEach((config) => {
-      const node = config && config.id ? document.getElementById(config.id) : null;
-      if (!node) {
-        return;
-      }
-
-      node.style.removeProperty("margin-top");
-
-      const computedMarginTop = Number.parseFloat(window.getComputedStyle(node).marginTop) || 0;
-      const baseOffset = Number(config.baseOffset || 0);
-      let appliedOffset = baseOffset;
-
-      if (baseOffset) {
-        node.style.marginTop = `${computedMarginTop + baseOffset}px`;
-      }
-
-      let rect = node.getBoundingClientRect();
-
-      if (previousBottom !== null && rect.top < previousBottom + gap) {
-        appliedOffset += previousBottom + gap - rect.top;
-        node.style.marginTop = `${computedMarginTop + appliedOffset}px`;
-        rect = node.getBoundingClientRect();
-      }
-
-      previousBottom = rect.bottom;
-    });
-  }
-
-  function reflowAgouraMenuLayout() {
-    reflowMenuColumn(
-      [
-        { id: "comp-lxwc81kt" },
-        { id: "comp-m2uhnceb" },
-        { id: "comp-lxwfenel", baseOffset: 36 },
-      ],
-      24
-    );
-
-    reflowMenuColumn(
-      [
-        { id: "comp-lxwdlfq3" },
-        { id: "comp-lxwddj3v" },
-        { id: "comp-lxwdkq33" },
-        { id: "comp-lxwfe1al" },
-        { id: "comp-lxwdw0s8" },
-      ],
-      24
-    );
   }
 
   function buildHomeTestimonialsMarkup(testimonials) {
@@ -1719,6 +1654,12 @@
       item?.description || "",
     ]);
 
+    const beveragesSection = document.getElementById("comp-lxwfenel");
+    if (beveragesSection) {
+      beveragesSection.style.transform = "translateY(36px)";
+      beveragesSection.style.transformOrigin = "top center";
+    }
+
     setRichTextBlock("comp-lxwfenen3", settings.agoura_menu_beverages_title || "Beverages");
     setRichTextBlock("comp-lxwfenep10", inlineItem(beverages[0]) || "MEXICAN COKE 3.75");
     setRichTextBlock("comp-lxwfener", inlineItem(beverages[1]) || "DIET COKE 3.75");
@@ -1812,13 +1753,6 @@
       skullImage.style.display = "none";
       skullImage.style.visibility = "hidden";
     }
-
-    requestAnimationFrame(() => {
-      reflowAgouraMenuLayout();
-      requestAnimationFrame(() => {
-        reflowAgouraMenuLayout();
-      });
-    });
   }
 
   function clearPendingState() {
@@ -1981,13 +1915,6 @@
   window.addEventListener("pageshow", () => {
     normalizeDocumentAssetUrls();
     enforceLogoOverride();
-  });
-  window.addEventListener("resize", () => {
-    if (window.location.pathname === "/agoura-hillsmenu" || window.location.pathname === "/miamimenu") {
-      requestAnimationFrame(() => {
-        reflowAgouraMenuLayout();
-      });
-    }
   });
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
