@@ -658,6 +658,78 @@
     return true;
   }
 
+  function getMenuSlotNode(id) {
+    const node = document.getElementById(id);
+    if (!node) {
+      return null;
+    }
+
+    return node.parentElement && node.parentElement.id ? node.parentElement : node;
+  }
+
+  function stripNodeIds(root) {
+    if (!root || root.nodeType !== 1) {
+      return;
+    }
+
+    root.removeAttribute("id");
+    root.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
+  }
+
+  function setRichTextCloneContent(root, text) {
+    if (!root) {
+      return;
+    }
+
+    const richTextNode =
+      root.matches(".wixui-rich-text, [data-testid='richTextElement']")
+        ? root
+        : root.querySelector(".wixui-rich-text, [data-testid='richTextElement']");
+
+    if (!richTextNode) {
+      return;
+    }
+
+    const contentNode = richTextNode.querySelector("h1, h2, h3, p") || richTextNode.firstElementChild;
+    const tagName = contentNode && contentNode.tagName ? contentNode.tagName.toLowerCase() : "p";
+    const className = contentNode && contentNode.className ? contentNode.className : "font_8 wixui-rich-text__text";
+
+    richTextNode.innerHTML = `<${tagName} class="${className}"><span class="wixui-rich-text__text">${formatRichTextContent(
+      text
+    )}</span></${tagName}>`;
+  }
+
+  function appendOverflowMenuGroupClones(cloneKey, visibleCount, templateIds, items, renderGroup) {
+    const templateNodes = (templateIds || []).map((id) => getMenuSlotNode(id));
+    if (!templateNodes.length || templateNodes.some((node) => !node) || !templateNodes[templateNodes.length - 1].parentElement) {
+      return;
+    }
+
+    const parent = templateNodes[templateNodes.length - 1].parentElement;
+    parent
+      .querySelectorAll(`[data-cms-clone='${cloneKey}']`)
+      .forEach((node) => node.parentElement && node.parentElement.removeChild(node));
+
+    if (!Array.isArray(items) || items.length <= visibleCount) {
+      return;
+    }
+
+    let cursor = templateNodes[templateNodes.length - 1];
+
+    items.slice(visibleCount).forEach((item, index) => {
+      const contentList = renderGroup(item, index) || [];
+
+      templateNodes.forEach((templateNode, nodeIndex) => {
+        const clone = templateNode.cloneNode(true);
+        stripNodeIds(clone);
+        clone.setAttribute("data-cms-clone", cloneKey);
+        setRichTextCloneContent(clone, contentList[nodeIndex] || "");
+        parent.insertBefore(clone, cursor.nextSibling);
+        cursor = clone;
+      });
+    });
+  }
+
   function buildHomeTestimonialsMarkup(testimonials) {
     const items = (testimonials || [])
       .slice(0, 3)
@@ -1462,7 +1534,8 @@
           settings.agoura_menu_image_5,
         ].filter(Boolean);
 
-    const readSectionItems = (sections) => ((sections || [])[0] && (sections || [])[0].items) || [];
+    const readSectionItems = (sections) =>
+      (sections || []).flatMap((section) => (section && Array.isArray(section.items) ? section.items : []));
     const itemLine = (item) => {
       if (!item) {
         return "";
@@ -1513,6 +1586,10 @@
     setRichTextBlock("comp-m2uhqkwh", happyHourItems[1]?.name || "$5 CHIPS & SALSA");
     setRichTextBlock("comp-m2uhr0io", happyHourItems[2]?.name || "$1 OYSTERS");
     setRichTextBlock("comp-m2uhq0ry", happyHourItems[2]?.description || "(1/2 DOZEN.....DOZEN)");
+    appendOverflowMenuGroupClones("happy-hour-overflow", 3, ["comp-m2uhr0io", "comp-m2uhq0ry"], happyHourItems, (item) => [
+      item?.name || "",
+      item?.description || "",
+    ]);
 
     const beveragesSection = document.getElementById("comp-lxwfenel");
     if (beveragesSection) {
@@ -1527,6 +1604,10 @@
     setRichTextBlock("comp-lxwfenes18", beverages[2]?.description || "Tamarind\nPineapple");
     setRichTextBlock("comp-lxwfenet11", inlineItem(beverages[3]) || "TOPO CHICO 3.75");
     setRichTextBlock("comp-lxwfhtbb", inlineItem(beverages[4]) || "WATER 2");
+    appendOverflowMenuGroupClones("beverages-overflow", 5, ["comp-lxwfenes5", "comp-lxwfenes18"], beverages, (item) => [
+      inlineItem(item),
+      item?.description || "",
+    ]);
 
     setRichTextBlock("comp-lxwc0cot", appetizers[0]?.name || "GUACAMOLE & CHIPS");
     setRichTextBlock("comp-lxwc0c97", itemLine(appetizers[0]) || "Cilantro, Cotija, Lime\n11");
@@ -1543,6 +1624,11 @@
     setRichTextBlock("comp-lxwc8me7", appetizers[4]?.name || "CLASSIC CAESAR SALAD");
     setRichTextBlock("comp-lxwc8m07", appetizers[4]?.description || "Baby Romaine, House Croutons,\nCotija, Egg");
     setRichTextBlock("comp-lxwc8lna", appetizers[4]?.price || "Pollo 15 | Steak 17 | Shrimp 17");
+    appendOverflowMenuGroupClones("appetizers-overflow", 5, ["comp-lxwc8me7", "comp-lxwc8m07", "comp-lxwc8lna"], appetizers, (item) => [
+      item?.name || "",
+      item?.description || "",
+      item?.price || "",
+    ]);
 
     setRichTextBlock("comp-lxwcokch", tacos[0]?.name || "POLLO ASADO");
     setRichTextBlock("comp-lxwcokv9", itemLine(tacos[0]) || "Chicken, Crema, Cotija, Pickled Carrots\n5");
@@ -1552,12 +1638,20 @@
     setRichTextBlock("comp-lxwcw03g", itemLine(tacos[2]) || "Oxtail, Beef Cheek, Short Rib, Pickled Onion\n6");
     setRichTextBlock("comp-lxwd4kr4", tacos[3]?.name || "AL PASTOR");
     setRichTextBlock("comp-lxwd4ke8", itemLine(tacos[3]) || "Pork Shoulder, Pineapple, Onion\n5");
+    appendOverflowMenuGroupClones("tacos-overflow", 4, ["comp-lxwd4kr4", "comp-lxwd4ke8"], tacos, (item) => [
+      item?.name || "",
+      itemLine(item),
+    ]);
 
     setRichTextBlock("comp-lxwdbarn", settings.agoura_menu_specials_price_line || "2 PER ORDER..........13");
     setRichTextBlock("comp-lxwd7s8m", specialties[0]?.name || "FLAUTAS");
     setRichTextBlock("comp-lxwd7t3u", itemLine(specialties[0]) || "Braised Beef Queso Mixto, Consommé");
     setRichTextBlock("comp-lxwd7sny", specialties[1]?.name || "BIRRIA");
     setRichTextBlock("comp-lxwd7rpr", itemLine(specialties[1]) || "Pollo, Queso, Crema, Cilantro");
+    appendOverflowMenuGroupClones("specialties-overflow", 2, ["comp-lxwd7sny", "comp-lxwd7rpr"], specialties, (item) => [
+      item?.name || "",
+      itemLine(item),
+    ]);
 
     setRichTextBlock("comp-lxwdhgm5", burritos[0]?.name || "STEAK BURRITO");
     setRichTextBlock("comp-lxwdhgs2", itemLine(burritos[0]) || "Crispy Potatoes, Queso Mixto, Chipotle Crema, Pico,\nGuacamole\n15");
@@ -1565,6 +1659,10 @@
     setRichTextBlock("comp-lxwdjk51", itemLine(burritos[1]) || "Crispy Potatoes, Queso Mixto, Chipotle Crema, Pico, Guacamole\n15");
     setRichTextBlock("comp-m1gnvxlc", burritos[2]?.name || "SHRIMP BURRITO");
     setRichTextBlock("comp-m1gnvxiz", itemLine(burritos[2]) || "Red Rice, Cilantro Crema, Pico, Guacamole\n16");
+    appendOverflowMenuGroupClones("burritos-overflow", 3, ["comp-m1gnvxlc", "comp-m1gnvxiz"], burritos, (item) => [
+      item?.name || "",
+      itemLine(item),
+    ]);
 
     setRichTextBlock("comp-lxwfb3bd", settings.agoura_menu_horchata_label || "HOMEMADE");
     setRichTextBlock("comp-lxwfcxhy", settings.agoura_menu_horchata_price || "6");
@@ -1576,6 +1674,10 @@
     setRichTextBlock("comp-lxwdwmlg17", itemLine(desserts[1]) || "Chantilly, Chocolate Pearls\n7");
     setRichTextBlock("comp-lxwdwmle5", desserts[2]?.name || "VANILLA BEAN FLAN");
     setRichTextBlock("comp-lxwdwmle18", itemLine(desserts[2]) || "Carmelo\n7");
+    appendOverflowMenuGroupClones("desserts-overflow", 3, ["comp-lxwdwmle5", "comp-lxwdwmle18"], desserts, (item) => [
+      item?.name || "",
+      itemLine(item),
+    ]);
 
     setMenuImage("comp-lx9h59lt", menuImages[0]);
     setMenuImage("comp-lxwbbbn0", menuImages[1]);
