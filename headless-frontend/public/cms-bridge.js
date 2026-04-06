@@ -858,11 +858,11 @@
 
   function buildReferenceSkullRowMarkup(skullSrc) {
     const normalizedSrc = normalizeAssetUrl(skullSrc || FALLBACK_SKULL_URL) || FALLBACK_SKULL_URL;
-    return `<div data-cms-skull-row="true" style="display:flex;justify-content:center;align-items:center;gap:48px;flex-wrap:wrap;margin:70px 64px;padding:0 32px;">${new Array(4)
+    return `<div data-cms-skull-row="true">${new Array(4)
       .fill("")
       .map(
         () =>
-          `<img src="${escapeHtml(normalizedSrc)}" alt="Skull icon" style="display:block;width:138px;height:190px;max-width:100%;object-fit:contain;filter:none;animation:skull-rotate 10s linear infinite;">`
+          `<img src="${escapeHtml(normalizedSrc)}" alt="Skull icon">`
       )
       .join("")}</div>`;
   }
@@ -876,39 +876,106 @@
     style.id = "cms-home-skull-layout-styles";
     style.textContent = `
       #comp-ljgxfk3f{
-        min-height:350px !important;
+        min-height:500px !important; /* Aggressively tightened from 600px */
         height:auto !important;
         overflow:hidden !important;
+        background-color: #0038FF !important; 
       }
       #comp-ljgxfk3f .comp-ljgxfk3f-container{
-        min-height:350px !important;
-        grid-template-rows:minmax(220px, auto) minmax(180px, auto) !important;
+        min-height:500px !important;
+        grid-template-rows:minmax(60px, auto) 1fr minmax(60px, auto) !important; /* Extremely tight grid */
         padding-bottom:0 !important;
-        overflow:hidden !important;
+        overflow:visible !important;
       }
       #comp-ljgxfu44 .comp-ljgxfu44-container{
         display:flex !important;
         justify-content:center !important;
         align-items:center !important;
-        gap:48px !important;
-        flex-wrap:wrap !important;
-      }
-      #comp-ljgxfu6r,
-      #comp-ljgxfzoz{
-        align-self:start !important;
-        margin-top:12px !important;
-      }
-      #comp-ljgxfu6r .comp-ljgxfu6r-container,
-      #comp-ljgxfzoz .comp-ljgxfzoz-container,
-      #comp-lkefjdmi .comp-lkefjdmi-container{
-        height:auto !important;
+        gap:150px !important; 
+        flex-wrap:nowrap !important;
+        padding-top:20px !important; /* Minimized inner gap */
+        padding-bottom:10px !important;
       }
       #comp-ljgxfu44 [data-cms-skull-row="true"]{
         display:flex !important;
         justify-content:center !important;
         align-items:center !important;
-        flex-wrap:wrap !important;
+        width:100% !important;
+        height:100% !important;
+        gap:150px !important;
       }
+      #comp-ljgxfu44 [data-cms-skull-row="true"] img {
+        display:block !important;
+        filter: brightness(0) invert(1) !important;
+        width: 150px !important; 
+        height: auto !important;
+        animation: skull-rotate 12s linear infinite !important;
+        transform-origin: center center !important;
+      }
+      /* Exact Zigzag: Skull 1(odd): Down, Skull 2(even): Up */
+      #comp-ljgxfu44 [data-cms-skull-row="true"] img:nth-child(odd) {
+        margin-top: 50px !important;
+      }
+      #comp-ljgxfu44 [data-cms-skull-row="true"] img:nth-child(even) {
+        margin-top: -50px !important;
+      }
+
+
+      #comp-ljgxfu6r,
+      #comp-ljgxfzoz {
+        align-self:start !important;
+        margin-top:10px !important;
+      }
+      
+      #comp-mdp32mh2,
+      #comp-lkefjdmi {
+        align-self:end !important; 
+        margin-bottom:0 !important;
+      }
+
+      /* Title and Content overrides to match exact design */
+      #comp-ljgxfu6r h1, #comp-ljgxfu6r h2, #comp-ljgxfu6r span, #comp-ljgxfu6r p {
+        color: #ffffff !important;
+        text-align: left !important; 
+        font-family: monospace, Courier, serif !important;
+        font-size: 32px !important; /* Reduced from 48px */
+        letter-spacing: 0.1em !important;
+        line-height: 1.1 !important;
+        text-transform: uppercase !important;
+      }
+
+      /* Reduced font size for the second heading (Secret Sauce) */
+      #comp-mdp32mh2 h1, #comp-mdp32mh2 h2, #comp-mdp32mh2 span, #comp-mdp32mh2 p {
+        color: #ffffff !important;
+        text-align: left !important; 
+        font-family: monospace, Courier, serif !important;
+        font-size: 20px !important; /* Reduced from 24px */
+        letter-spacing: 0.1em !important;
+        line-height: 1.2 !important;
+        text-transform: uppercase !important;
+      }
+
+      #comp-ljgxfzoz h1, #comp-ljgxfzoz h2, #comp-ljgxfzoz span, #comp-ljgxfzoz p,
+      #comp-lkefjdmi h1, #comp-lkefjdmi h2, #comp-lkefjdmi span, #comp-lkefjdmi p {
+        color: #ffffff !important;
+        text-align: left !important;
+        font-family: monospace, Courier, serif !important;
+        font-size: 14px !important; /* Proportionately smaller body */
+        line-height: 1.4 !important;
+        letter-spacing: 0.05em !important;
+        max-width: 600px !important; 
+      }
+
+
+
+
+      #comp-ljgxfu6r .comp-ljgxfu6r-container,
+      #comp-ljgxfzoz .comp-ljgxfzoz-container,
+      #comp-mdp32mh2 .comp-mdp32mh2-container,
+      #comp-lkefjdmi .comp-lkefjdmi-container{
+        height:auto !important;
+      }
+
       ${HOME_SKULL_IDS.map(
         (id) => `
       #${id}{
@@ -931,32 +998,41 @@
       #${id} img{
         width:100% !important;
         height:100% !important;
-        animation: skull-rotate 10s linear infinite !important;
+        animation: skull-rotate 12s linear infinite !important;
         transition: none !important;
         transform-origin: center center !important;
       }`
       ).join("")}
       @media screen and (max-width: 750px){
         #comp-ljgxfk3f{
-          min-height:200px !important;
+          min-height:550px !important;
+          background-color: #0047AB !important;
         }
         #comp-ljgxfk3f .comp-ljgxfk3f-container{
-          min-height:200px !important;
-          grid-template-rows:minmax(120px, auto) minmax(60px, auto) minmax(120px, auto) !important;
+          min-height:550px !important;
+          grid-template-rows: auto !important;
+          padding-bottom:50px !important;
         }
         #comp-ljgxfu44 .comp-ljgxfu44-container{
-          gap:36px !important;
+          gap:80px !important;
+          padding-top:80px !important;
+          padding-bottom:80px !important;
         }
-        ${HOME_SKULL_IDS.map(
-          (id) => `
-        #${id}{
-          width:92px !important;
-          height:126px !important;
-          min-width:92px !important;
-          max-width:92px !important;
-        }`
-        ).join("")}
+        #comp-ljgxfu44 [data-cms-skull-row="true"]{
+          gap:80px !important;
+        }
+        #comp-ljgxfu44 [data-cms-skull-row="true"] img {
+          width: 80px !important;
+        }
+        #comp-ljgxfu44 [data-cms-skull-row="true"] img:nth-child(even) {
+          margin-top: 50px !important;
+        }
+        #comp-ljgxfu44 [data-cms-skull-row="true"] img:nth-child(odd) {
+          margin-top: -50px !important;
+        }
       }
+
+
       @keyframes skull-rotate {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }

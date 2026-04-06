@@ -170,26 +170,43 @@ img {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 80px;
-  margin: 48px 0;
-  min-height: 180px;
+  gap: 150px;
+  margin: 40px 0;
+  min-height: 400px;
 }
 
 .skull-row img {
-  width: 70px;
+  width: 150px;
   height: auto;
   object-fit: contain;
   filter: brightness(0) invert(1);
-  animation: skull-rotate 10s linear infinite;
+  animation: skull-rotate 12s linear infinite;
   transform-origin: center center;
 }
 
-.skull-row img:nth-child(even) {
-  transform: translateY(30px);
+.skull-row img:nth-child(odd) {
+  margin-top: 80px; /* Down */
 }
 
-.skull-row img:nth-child(odd) {
-  transform: translateY(-30px);
+.skull-row img:nth-child(even) {
+  margin-top: -80px; /* Up */
+}
+
+@media screen and (max-width: 750px) {
+  .skull-row {
+    gap: 80px;
+    margin: 60px 0;
+    min-height: 250px;
+  }
+  .skull-row img {
+    width: 80px;
+  }
+  .skull-row img:nth-child(even) {
+    margin-top: 50px;
+  }
+  .skull-row img:nth-child(odd) {
+    margin-top: -50px;
+  }
 }
 
 @keyframes skull-rotate {
