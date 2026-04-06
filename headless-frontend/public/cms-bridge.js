@@ -96,6 +96,9 @@
     }
 
     let normalized = url.trim();
+    normalized = normalized
+      .replace(/,blur_\d+/gi, "")
+      .replace(/%2cblur_\d+/gi, "");
 
     STATIC_HOST_REWRITES.forEach(([from, to]) => {
       if (normalized.startsWith(from)) {
@@ -162,6 +165,43 @@
       if (normalizedValue && normalizedValue !== currentValue) {
         node.setAttribute(attributeName, normalizedValue);
       }
+    });
+  }
+
+  function rewriteLegacyBrandText(root = document.body) {
+    if (!root) {
+      return;
+    }
+
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node || !node.nodeValue || !node.nodeValue.trim()) {
+          return NodeFilter.FILTER_REJECT;
+        }
+
+        const parentTag = node.parentElement ? node.parentElement.tagName : "";
+        if (["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA"].includes(parentTag)) {
+          return NodeFilter.FILTER_REJECT;
+        }
+
+        if (!/UPTOWN 66|Uptown 66|UPTOWN66/.test(node.nodeValue)) {
+          return NodeFilter.FILTER_REJECT;
+        }
+
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+
+    const textNodes = [];
+    while (walker.nextNode()) {
+      textNodes.push(walker.currentNode);
+    }
+
+    textNodes.forEach((node) => {
+      node.nodeValue = node.nodeValue
+        .replace(/UPTOWN 66/g, "FRANCKIES")
+        .replace(/Uptown 66/g, "Franckies")
+        .replace(/UPTOWN66/g, "FRANCKIES");
     });
   }
 
@@ -354,6 +394,28 @@
     }
   }
 
+  function clearWixImageBlur(root, img, wowImage) {
+    if (img) {
+      img.style.filter = "none";
+      img.style.opacity = "1";
+      img.setAttribute("data-load-done", "");
+      img.removeAttribute("data-blur");
+    }
+
+    [root, wowImage, ...(root ? Array.from(root.querySelectorAll("[data-animate-blur], .jhxvbR, .Ux33nC, picture, img")) : [])].forEach((node) => {
+      if (!node) {
+        return;
+      }
+
+      node.removeAttribute("data-animate-blur");
+      node.removeAttribute("data-is-blurred");
+      if (node.style) {
+        node.style.filter = "none";
+        node.style.opacity = "1";
+      }
+    });
+  }
+
   function setImage(id, src) {
     const root = document.getElementById(id);
     const img = root && root.querySelector("img");
@@ -371,14 +433,16 @@
       img.removeAttribute("srcset");
       img.removeAttribute("srcSet");
       img.removeAttribute("sizes");
-      img.setAttribute("data-load-done", "");
-      img.style.opacity = "1";
       img.style.display = "block";
+      clearWixImageBlur(root, img, wowImage);
 
       root.style.opacity = "1";
       root.removeAttribute("hidden");
       if (wowImage && typeof wowImage.reLayout === "function") {
-        requestAnimationFrame(() => wowImage.reLayout());
+        requestAnimationFrame(() => {
+          wowImage.reLayout();
+          clearWixImageBlur(root, img, wowImage);
+        });
       }
     }
   }
@@ -794,11 +858,11 @@
 
   function buildReferenceSkullRowMarkup(skullSrc) {
     const normalizedSrc = normalizeAssetUrl(skullSrc || FALLBACK_SKULL_URL) || FALLBACK_SKULL_URL;
-    return `<div data-cms-skull-row="true" style="display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;margin:70px 64px;padding:0 32px;">${new Array(4)
+    return `<div data-cms-skull-row="true" style="display:flex;justify-content:center;align-items:center;gap:48px;flex-wrap:wrap;margin:70px 64px;padding:0 32px;">${new Array(4)
       .fill("")
       .map(
         () =>
-          `<img src="${escapeHtml(normalizedSrc)}" alt="Skull icon" style="display:block;width:138px;height:190px;max-width:100%;object-fit:contain;filter:none;">`
+          `<img src="${escapeHtml(normalizedSrc)}" alt="Skull icon" style="display:block;width:138px;height:190px;max-width:100%;object-fit:contain;filter:none;animation:skull-rotate 10s linear infinite;">`
       )
       .join("")}</div>`;
   }
@@ -826,7 +890,7 @@
         display:flex !important;
         justify-content:center !important;
         align-items:center !important;
-        gap:24px !important;
+        gap:48px !important;
         flex-wrap:wrap !important;
       }
       #comp-ljgxfu6r,
@@ -867,9 +931,9 @@
       #${id} img{
         width:100% !important;
         height:100% !important;
-        animation:none !important;
-        transition:none !important;
-        transform:none !important;
+        animation: skull-rotate 10s linear infinite !important;
+        transition: none !important;
+        transform-origin: center center !important;
       }`
       ).join("")}
       @media screen and (max-width: 750px){
@@ -881,7 +945,7 @@
           grid-template-rows:minmax(120px, auto) minmax(60px, auto) minmax(120px, auto) !important;
         }
         #comp-ljgxfu44 .comp-ljgxfu44-container{
-          gap:18px !important;
+          gap:36px !important;
         }
         ${HOME_SKULL_IDS.map(
           (id) => `
@@ -892,6 +956,10 @@
           max-width:92px !important;
         }`
         ).join("")}
+      }
+      @keyframes skull-rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
       }
     `;
     document.head.appendChild(style);
@@ -1293,6 +1361,7 @@
     const testimonials = data.testimonials || [];
     const galleryImages = settings.gallery_images || [];
     const skullImage = settings.skull_image || FALLBACK_SKULL_URL;
+    const mobileHeroImage = settings.hero_left_image || settings.hero_center_image || settings.hero_right_image;
 
     const rawMarkupApplied = applyRawMainMarkup(settings.home_main_markup);
 
@@ -1305,7 +1374,7 @@
     hideNodeById("comp-mdp32mhg1");
     setImage("comp-lx95a8rh", settings.hero_left_image);
     setImage("comp-lx9904sy", settings.hero_center_image);
-    setImage("comp-lz8sc600", settings.hero_right_image);
+    setImage("comp-lz8sc600", mobileHeroImage);
     HOME_SKULL_IDS.forEach((id) => {
       setImageWithFallback(id, skullImage, FALLBACK_SKULL_URL, "Skull icon");
     });
@@ -1474,7 +1543,7 @@
     applyRawMainMarkup(
       buildAgouraMenuPageMarkup(
         settings.menu_page_title || "MENU",
-        settings.menu_page_brand || "UPTOWN 66",
+        settings.menu_page_brand || "FRANCKIES",
         `${miami.name} • ${miami.address}, ${miami.city}`,
         settings.agoura_menu_images || [
           settings.agoura_menu_image_1,
@@ -1528,7 +1597,7 @@
     applyRawMainMarkup(
       buildAgouraMenuPageMarkup(
         settings.menu_page_title || "MENU",
-        settings.menu_page_brand || "UPTOWN 66",
+        settings.menu_page_brand || "FRANCKIES",
         `${miami.name} • ${miami.address}, ${miami.city}`,
         settings.agoura_menu_images || [
           settings.agoura_menu_image_1,
@@ -1553,7 +1622,7 @@
     setTextBlock("comp-lxwb31ei", settings.menu_page_title || "MENU", "h1", "font_2 wixui-rich-text__text");
     setInnerHtml("comp-lxwb87gt", toParagraphHtml(`${miami.name} • ${miami.address}, ${miami.city}`));
     setTextBlock("comp-lxweux6y1", miami.name, "h1", "font_2 wixui-rich-text__text");
-    setTextBlock("comp-lxwbz4d4", settings.menu_page_brand || "UPTOWN 66", "h1", "font_2 wixui-rich-text__text");
+    setTextBlock("comp-lxwbz4d4", settings.menu_page_brand || "FRANCKIES", "h1", "font_2 wixui-rich-text__text");
   }
 
   function applyAgouraMenuHtmlPage(data) {
@@ -1846,6 +1915,7 @@
     applyPageContent(data);
     rewriteInternalLinks();
     rewriteLegacyMenuLabels();
+    rewriteLegacyBrandText();
     normalizeDocumentAssetUrls();
     initMobileMenuFallback();
     clearPendingStateWhenReady();
@@ -1904,20 +1974,24 @@
   }
 
   rewriteInternalLinks();
+  rewriteLegacyBrandText();
   normalizeDocumentAssetUrls();
   initMobileMenuFallback();
   wireOrderLinks();
   initLinkPrefetch();
   window.addEventListener("load", () => {
+    rewriteLegacyBrandText();
     normalizeDocumentAssetUrls();
     enforceLogoOverride();
   });
   window.addEventListener("pageshow", () => {
+    rewriteLegacyBrandText();
     normalizeDocumentAssetUrls();
     enforceLogoOverride();
   });
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
+      rewriteLegacyBrandText();
       normalizeDocumentAssetUrls();
       enforceLogoOverride();
     }
