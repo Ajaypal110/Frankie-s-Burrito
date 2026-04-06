@@ -169,16 +169,36 @@ img {
 .skull-row {
   display: flex;
   justify-content: center;
-  gap: 26px;
-  margin: 18px 0 16px;
+  align-items: center;
+  gap: 80px;
+  margin: 48px 0;
+  min-height: 180px;
 }
 
 .skull-row img {
-  width: 48px;
+  width: 70px;
   height: auto;
-  min-height: 48px;
   object-fit: contain;
-  filter: brightness(0.15); /* Ensures the skull design is dark/visible on light background */
+  filter: brightness(0) invert(1);
+  animation: skull-rotate 10s linear infinite;
+  transform-origin: center center;
+}
+
+.skull-row img:nth-child(even) {
+  transform: translateY(30px);
+}
+
+.skull-row img:nth-child(odd) {
+  transform: translateY(-30px);
+}
+
+@keyframes skull-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .testimonials {

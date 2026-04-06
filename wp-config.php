@@ -30,6 +30,51 @@
  *   DB_COLLATE
  */
 
+if ( ! function_exists( 'fb_load_env_file' ) ) {
+	function fb_load_env_file( $file_path ) {
+		if ( ! is_readable( $file_path ) ) {
+			return;
+		}
+
+		$lines = file( $file_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
+		if ( false === $lines ) {
+			return;
+		}
+
+		foreach ( $lines as $line ) {
+			$line = trim( $line );
+			if ( '' === $line || '#' === $line[0] ) {
+				continue;
+			}
+
+			$separator = strpos( $line, '=' );
+			if ( false === $separator ) {
+				continue;
+			}
+
+			$key   = trim( substr( $line, 0, $separator ) );
+			$value = substr( $line, $separator + 1 );
+
+			if ( '' === $key || false !== getenv( $key ) ) {
+				continue;
+			}
+
+			putenv( $key . '=' . $value );
+			$_ENV[ $key ]    = $value;
+			$_SERVER[ $key ] = $value;
+		}
+	}
+}
+
+if ( ! function_exists( 'fb_env' ) ) {
+	function fb_env( $key, $default = '' ) {
+		$value = getenv( $key );
+		return false === $value ? $default : $value;
+	}
+}
+
+fb_load_env_file( __DIR__ . '/.env' );
+
 /**#@+
  * Authentication unique keys and salts.
  *
@@ -41,14 +86,14 @@
  *
  * @since 2.6.0
  */
-define( 'AUTH_KEY',         'put your unique phrase here' );
-define( 'SECURE_AUTH_KEY',  'put your unique phrase here' );
-define( 'LOGGED_IN_KEY',    'put your unique phrase here' );
-define( 'NONCE_KEY',        'put your unique phrase here' );
-define( 'AUTH_SALT',        'put your unique phrase here' );
-define( 'SECURE_AUTH_SALT', 'put your unique phrase here' );
-define( 'LOGGED_IN_SALT',   'put your unique phrase here' );
-define( 'NONCE_SALT',       'put your unique phrase here' );
+define( 'AUTH_KEY',         fb_env( 'AUTH_KEY', 'replace-me' ) );
+define( 'SECURE_AUTH_KEY',  fb_env( 'SECURE_AUTH_KEY', 'replace-me' ) );
+define( 'LOGGED_IN_KEY',    fb_env( 'LOGGED_IN_KEY', 'replace-me' ) );
+define( 'NONCE_KEY',        fb_env( 'NONCE_KEY', 'replace-me' ) );
+define( 'AUTH_SALT',        fb_env( 'AUTH_SALT', 'replace-me' ) );
+define( 'SECURE_AUTH_SALT', fb_env( 'SECURE_AUTH_SALT', 'replace-me' ) );
+define( 'LOGGED_IN_SALT',   fb_env( 'LOGGED_IN_SALT', 'replace-me' ) );
+define( 'NONCE_SALT',       fb_env( 'NONCE_SALT', 'replace-me' ) );
 
 /**#@-*/
 

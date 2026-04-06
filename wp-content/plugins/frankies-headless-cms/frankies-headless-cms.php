@@ -1295,7 +1295,11 @@ final class Frankies_Headless_CMS {
 			'press_items'  => self::collect_press_items(),
 		);
 
-		return rest_ensure_response( self::normalize_asset_urls( $payload ) );
+		$response = rest_ensure_response( self::normalize_asset_urls( $payload ) );
+		$response->header( 'Cache-Control', 'no-store, max-age=0' );
+		$response->header( 'X-Robots-Tag', 'noindex, nofollow' );
+
+		return $response;
 	}
 
 	private static function normalize_asset_urls( $value ) {
@@ -1385,7 +1389,7 @@ final class Frankies_Headless_CMS {
 			array(
 				'title'   => 'Mary Ellen Carrillo',
 				'author'  => 'Mary Ellen Carrillo',
-				'content' => "Wowowow! I am pleased to find a place in Miami where they focus on the food and not just atmosphere. This place has it all! Everything we had was amazing. What I loved the most was the shrimp. Yes for Uptown 66!! Prices are super decent too for the food it's so worth it. See you soon uptown.",
+				'content' => "Wowowow! I am pleased to find a place in Miami where they focus on the food and not just atmosphere. This place has it all! Everything we had was amazing. What I loved the most was the shrimp. Yes for Franckies!! Prices are super decent too for the food it's so worth it. See you soon Franckies.",
 			),
 			array(
 				'title'   => 'Sandy Cheng',
@@ -1782,12 +1786,14 @@ final class Frankies_Headless_CMS {
 .fb-menu-builder{max-width:1100px}
 .fb-menu-builder__sections{display:flex;flex-direction:column;gap:16px}
 .fb-menu-section{border:1px solid #dcdcde;border-radius:10px;background:#fff;padding:16px}
-.fb-menu-section__header{display:flex;gap:12px;align-items:center;margin-bottom:12px}
-.fb-menu-section__title{flex:1 1 auto}
+.fb-menu-section__header{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.fb-menu-section__title{flex:1 1 auto;min-width:0}
 .fb-menu-section__handle,.fb-menu-item__handle{font-size:22px;line-height:1;cursor:move;color:#50575e}
 .fb-menu-section__items{display:flex;flex-direction:column;gap:12px}
 .fb-menu-item{display:grid;grid-template-columns:24px minmax(180px,1.5fr) minmax(100px,.6fr) minmax(220px,2fr) auto;gap:12px;align-items:start;padding:12px;border:1px solid #dcdcde;border-radius:8px;background:#f6f7f7}
-.fb-menu-item__name,.fb-menu-item__price,.fb-menu-item__description{width:100%}
+.fb-menu-item__name,.fb-menu-item__price,.fb-menu-item__description{width:100%;min-width:0}
+@media (max-width: 960px){.fb-menu-item{grid-template-columns:24px minmax(0,1fr) minmax(110px,.6fr) auto}.fb-menu-item__description{grid-column:2 / -1}}
+@media (max-width: 782px){.fb-menu-item{grid-template-columns:24px minmax(0,1fr);align-items:center}.fb-menu-item__price,.fb-menu-item__description,.fb-menu-item-remove{grid-column:2}.fb-menu-item__description{min-height:72px}}
 .fb-home-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.85fr);gap:24px;align-items:start}
 .fb-home-layout__form{display:flex;flex-direction:column;gap:20px}
 .fb-dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;max-width:1100px;margin-top:24px}
@@ -2201,11 +2207,11 @@ JS;
 
 	private static function settings_fields() {
 		$fields = array(
-			'brand_name'           => array( 'label' => 'Brand name', 'type' => 'text', 'section' => 'frankies_headless_branding', 'placeholder' => 'UPTOWN 66' ),
+			'brand_name'           => array( 'label' => 'Brand name', 'type' => 'text', 'section' => 'frankies_headless_branding', 'placeholder' => 'FRANCKIES' ),
 			'logo_image'           => array( 'label' => 'Logo image', 'type' => 'media', 'section' => 'frankies_headless_branding', 'placeholder' => 'https://...', 'preview' => true ),
-			'hero_title'           => array( 'label' => 'Hero title', 'type' => 'text', 'section' => 'frankies_headless_home_hero', 'placeholder' => 'UPTOWN 66' ),
+			'hero_title'           => array( 'label' => 'Hero title', 'type' => 'text', 'section' => 'frankies_headless_home_hero', 'placeholder' => 'FRANCKIES' ),
 			'hero_copy'            => array( 'label' => 'Hero copy', 'type' => 'textarea', 'rows' => 4, 'section' => 'frankies_headless_home_hero', 'placeholder' => 'Main homepage introduction.' ),
-			'secret_sauce_title'   => array( 'label' => 'Secret sauce title', 'type' => 'text', 'section' => 'frankies_headless_home_hero', 'placeholder' => 'THE SECRET SAUCE OF UPTOWN 66' ),
+			'secret_sauce_title'   => array( 'label' => 'Secret sauce title', 'type' => 'text', 'section' => 'frankies_headless_home_hero', 'placeholder' => 'THE SECRET SAUCE OF FRANCKIES' ),
 			'secret_sauce_copy'    => array( 'label' => 'Secret sauce copy', 'type' => 'textarea', 'rows' => 5, 'section' => 'frankies_headless_home_hero', 'placeholder' => 'Secondary homepage story copy.' ),
 			'order_url'            => array( 'label' => 'Global order URL', 'type' => 'url', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'https://example.com/order' ),
 			'menu_primary_label'   => array( 'label' => 'Agoura Hills menu button label', 'type' => 'text', 'section' => 'frankies_headless_home_menu', 'placeholder' => 'MENU' ),
@@ -2260,7 +2266,7 @@ JS;
 			'hours_heading'        => array( 'label' => 'Hours and location heading', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'HOURS & LOCATION' ),
 			'happy_hour_heading'   => array( 'label' => 'Happy hour heading', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'HAPPY HOUR' ),
 			'menu_page_title'      => array( 'label' => 'Menu page title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'MENU' ),
-			'menu_page_brand'      => array( 'label' => 'Menu page brand title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'UPTOWN 66' ),
+			'menu_page_brand'      => array( 'label' => 'Menu page brand title', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'FRANCKIES' ),
 			'miami_menu_sections'  => array( 'label' => 'Agoura Hills menu sections', 'type' => 'menu_builder', 'section' => 'frankies_headless_menu_page_content' ),
 			'agoura_menu_location_line' => array( 'label' => 'Agoura menu location line', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => 'Agoura Hills • 6600 Biscayne Blvd, Agoura Hills, CA' ),
 			'agoura_menu_market_note' => array( 'label' => 'Agoura menu market note', 'type' => 'text', 'section' => 'frankies_headless_menu_page_content', 'placeholder' => '*Prices subject to change based on market.' ),
@@ -2334,12 +2340,12 @@ JS;
 
 	private static function default_settings() {
 		$defaults = array(
-			'brand_name'           => 'UPTOWN 66',
+			'brand_name'           => 'FRANCKIES',
 			'logo_image'           => '',
-			'hero_title'           => 'UPTOWN 66',
-			'hero_copy'            => 'UPTOWN 66 IS AN EXPLORATION OF AUTHENTIC MEXICAN STREET FOOD THROUGH THE LENS OF CHEF NUNO. SOURCING FRESHEST LOCAL PRODUCE AND HIGHEST QUALITY MEATS AND SEAFOOD.',
-			'secret_sauce_title'   => 'THE SECRET SAUCE OF UPTOWN 66',
-			'secret_sauce_copy'    => 'WITH THE CELEBRATION OF OUR CULINARY PASSION, UPTOWN 66 FEATURES HAND-PRESSED TORTILLAS MADE FROM HEIRLOOM CORN SOURCED FROM OAXACA AND SIGNATURE BARBACOA CRAFTED FROM SHORT-RIB, OXTAIL, AND BEEF CHEEK, ALL SLOW-BRAISED WITH MEXICAN CHILIS TO DEVELOP RICH, AUTHENTIC FLAVORS.',
+			'hero_title'           => 'FRANCKIES',
+			'hero_copy'            => 'FRANCKIES IS AN EXPLORATION OF AUTHENTIC MEXICAN STREET FOOD THROUGH THE LENS OF CHEF NUNO. SOURCING FRESHEST LOCAL PRODUCE AND HIGHEST QUALITY MEATS AND SEAFOOD.',
+			'secret_sauce_title'   => 'THE SECRET SAUCE OF FRANCKIES',
+			'secret_sauce_copy'    => 'WITH THE CELEBRATION OF OUR CULINARY PASSION, FRANCKIES FEATURES HAND-PRESSED TORTILLAS MADE FROM HEIRLOOM CORN SOURCED FROM OAXACA AND SIGNATURE BARBACOA CRAFTED FROM SHORT-RIB, OXTAIL, AND BEEF CHEEK, ALL SLOW-BRAISED WITH MEXICAN CHILIS TO DEVELOP RICH, AUTHENTIC FLAVORS.',
 			'order_url'            => 'https://frankiesbreakfastburritos.toast.site/',
 			'menu_primary_label'   => 'MENU',
 			'menu_primary_url'     => 'https://www.uptown66.miami/agoura-hillsmenu',
@@ -2360,19 +2366,19 @@ JS;
 				)
 			),
 			'about_title'          => 'GET TO KNOW US',
-			'about_copy'           => 'Inspired by our creators Nuno Grullon and Akira van Egmond, Upper East Side MiMo District\'s favorite Mexican cantina is an exploration of authentic Mexican street food through the lens of Chef Nuno. Sourcing the freshest local produce and highest quality meats and seafood, Uptown 66 has become a standard for quality and consistency for locals and visitors alike. Our atmosphere evolves throughout the day, from lunch and happy hour to late-night dining, while staying grounded in flavor, craft, and consistency.',
+			'about_copy'           => 'Inspired by our creators Nuno Grullon and Akira van Egmond, Upper East Side MiMo District\'s favorite Mexican cantina is an exploration of authentic Mexican street food through the lens of Chef Nuno. Sourcing the freshest local produce and highest quality meats and seafood, Franckies has become a standard for quality and consistency for locals and visitors alike. Our atmosphere evolves throughout the day, from lunch and happy hour to late-night dining, while staying grounded in flavor, craft, and consistency.',
 			'about_intro_lead'     => 'Inspired by our creators Nuno Grullon and Akira van Egmond, Upper East Side MiMo District&rsquo;s favorite Mexican cantina, is an exploration of authentic Mexican street food through the lens of Chef Nuno. Sourcing the freshest local produce and highest quality meats, and seafood.',
-			'about_intro_followup' => 'Neighborhood favorite, nationwide phenomenon. Don&rsquo;t let awards speak for you, try Uptown 66 and let yourself be the judge.',
+			'about_intro_followup' => 'Neighborhood favorite, nationwide phenomenon. Don&rsquo;t let awards speak for you, try Franckies and let yourself be the judge.',
 			'about_chef_label'     => 'CHEF NUNO GRULLON:',
 			'about_chef_heading'   => 'PASSIONATE CREATIVITY / FROM THE BRONX TO MIAMI',
-			'about_chef_bio'       => 'The driving force behind Uptown 66 is Dominican born Chef Nuno Grullon. Entering the culinary world at 15 years old, Nuno worked at a wide range of New York City kitchens where he developed his craft, discipline, and point of view. His cooking blends technique, energy, and a deep respect for ingredients, bringing bold flavor and consistency to every service.',
+			'about_chef_bio'       => 'The driving force behind Franckies is Dominican born Chef Nuno Grullon. Entering the culinary world at 15 years old, Nuno worked at a wide range of New York City kitchens where he developed his craft, discipline, and point of view. His cooking blends technique, energy, and a deep respect for ingredients, bringing bold flavor and consistency to every service.',
 			'about_story_copy'     => 'From our hand-pressed tortillas of heirloom corn from Oaxaca, to our award winning Birria made with short-rib, oxtail and beef cheek slow-braised overnight with our selection of Mexican chilis. It only begins there, this diverse menu has many fan favorites all made from scratch. From the notorious steak burrito to our famous loaded nachos layered with house made cheese sauce. Always leave room for dessert, light airy churros dipped in silky chocolate sauce, creamy caramel flan and a tres leches like you&rsquo;ve never had before. Every dish we serve is to showcase our passion for food.',
 			'about_banner_image'   => 'https://static.wixstatic.com/media/da4e2b_71a8a0efdfd7425da73e0202e531a5b3~mv2.jpg/v1/fill/w_147,h_98,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/3Q5A0140.jpg',
 			'about_portrait_image' => 'https://static.wixstatic.com/media/da4e2b_e103d357da0a4916b06677b312345181_mv2.png/v1/crop/x_112,y_0,w_345,h_480/fill/w_86,h_120,al_c,q_85,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMG_2459_heic.png',
 			'about_primary_image'  => 'https://static.wixstatic.com/media/da4e2b_f3b6ad77ffc44f4497ea6512d9897c46_mv2.jpg/v1/fill/w_147,h_98,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMGL0409_JPG.jpg',
 			'about_secondary_image'=> 'https://static.wixstatic.com/media/da4e2b_0046467888ae4c36bcb37ea88d6821c4~mv2.jpg/v1/fill/w_147,h_221,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMGL0127_JPG.jpg',
 			'press_title'          => 'PRESS',
-			'press_copy'           => 'Featured coverage for Uptown 66, from Miami food press to national recognition.',
+			'press_copy'           => 'Featured coverage for Franckies, from Miami food press to national recognition.',
 			'press_item_1_image'   => 'https://static.wixstatic.com/media/da4e2b_cc208a132d5d4d97893e956871c56f1f_mv2.jpeg/v1/fill/w_147,h_83,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/MIA_104UPTOWN6600MIAPPP.jpg',
 			'press_item_1_outlet'  => 'MIAMI HERALD',
 			'press_item_1_title'   => 'This outdoor Mexican restaurant in Miami just won a national TV contest for best taco',
@@ -2394,7 +2400,7 @@ JS;
 			'locations_intro_image' => '',
 			'locations_miami_image' => '',
 			'miami_label'          => 'Agoura Hills',
-			'mimo_intro_copy'      => 'Uptown 66 now calls Agoura Hills home, serving award-winning tacos with the same unmistakable street food soul. Nestled in the city with bold flavors and no shortcuts, it is the heartbeat of the brand. No frills, just fire.',
+			'mimo_intro_copy'      => 'Franckies now calls Agoura Hills home, serving award-winning tacos with the same unmistakable street food soul. Nestled in the city with bold flavors and no shortcuts, it is the heartbeat of the brand. No frills, just fire.',
 			'mimo_happy_hour_copy' => "Monday-Friday\n4pm-7pm",
 			'mimo_hero_image'      => 'https://static.wixstatic.com/media/da4e2b_b41c698c3ac24a2ba3b44d624217c546~mv2.jpg/v1/fill/w_160,h_90,al_c,q_80,usm_0.66_1.00_0.01,blur_3,enc_avif,quality_auto/da4e2b_b41c698c3ac24a2ba3b44d624217c546_mv2.jpg',
 			'mimo_gallery_images'  => implode(
@@ -2413,7 +2419,7 @@ JS;
 			'hours_heading'        => 'HOURS & LOCATION',
 			'happy_hour_heading'   => 'HAPPY HOUR',
 			'menu_page_title'      => 'MENU',
-			'menu_page_brand'      => 'UPTOWN 66',
+			'menu_page_brand'      => 'FRANCKIES',
 			'agoura_menu_location_line' => 'Agoura Hills • 6600 Biscayne Blvd, Agoura Hills, CA',
 			'agoura_menu_market_note' => '*Prices subject to change based on market.',
 			'agoura_menu_oysters_title' => 'Oysters',
@@ -2753,7 +2759,7 @@ JS;
 			$locations = array(
 				array(
 					'title'     => 'Agoura Hills',
-					'content'   => 'Original Uptown 66 location serving Mexican street food in Agoura Hills.',
+					'content'   => 'Original Franckies location serving Mexican street food in Agoura Hills.',
 					'address'   => '6600 Biscayne Blvd',
 					'city'      => 'Agoura Hills, CA',
 					'menu_url'  => 'https://www.uptown66.miami/agoura-hillsmenu',
@@ -2785,22 +2791,22 @@ JS;
 			$press_items = array(
 				array(
 					'title'   => 'This outdoor Mexican restaurant in Miami just won a national TV contest for best taco',
-					'content' => 'Miami Herald coverage of Uptown 66 and its national recognition.',
+					'content' => 'Miami Herald coverage of Franckies and its national recognition.',
 					'outlet'  => 'MIAMI HERALD',
 				),
 				array(
 					'title'   => 'Miami\'s 2022 Best Tacos',
-					'content' => 'Miami New Times named Uptown 66 among the city\'s best taco destinations.',
+					'content' => 'Miami New Times named Franckies among the city\'s best taco destinations.',
 					'outlet'  => 'MIAMI NEW TIMES',
 				),
 				array(
 					'title'   => 'Good Morning America Proclaims Miami Taqueria Tops in U.S.',
-					'content' => 'Coverage of Uptown 66 earning national attention for its tacos.',
+					'content' => 'Coverage of Franckies earning national attention for its tacos.',
 					'outlet'  => 'MIAMI NEW TIMES',
 				),
 				array(
 					'title'   => 'A Miami Taco Place is Crowned Number One',
-					'content' => 'Broken Plate feature on Uptown 66 and its standout menu.',
+					'content' => 'Broken Plate feature on Franckies and its standout menu.',
 					'outlet'  => 'BROKEN PLATE',
 				),
 			);

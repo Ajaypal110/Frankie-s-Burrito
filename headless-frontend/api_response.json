@@ -1,11 +1,11 @@
 {
   "settings": {
-    "brand_name": "UPTOWN 66",
+    "brand_name": "FRANCKIES",
     "logo_image": "http://localhost:8883/wp-content/uploads/2026/04/WhatsApp_Image_2026-04-04_at_11.49.47_AM-removebg-preview-1.png",
-    "hero_title": "UPTOWN 66",
-    "hero_copy": "UPTOWN 66 IS AN EXPLORATION OF AUTHENTIC MEXICAN STREET FOOD THROUGH THE LENS OF CHEF NUNO. SOURCING FRESHEST LOCAL PRODUCE AND HIGHEST QUALITY MEATS AND SEAFOOD.",
-    "secret_sauce_title": "THE SECRET SAUCE OF UPTOWN 66",
-    "secret_sauce_copy": "WITH THE CELEBRATION OF OUR CULINARY PASSION, UPTOWN 66 FEATURES HAND-PRESSED TORTILLAS MADE FROM HEIRLOOM CORN SOURCED FROM OAXACA AND SIGNATURE BARBACOA CRAFTED FROM SHORT-RIB, OXTAIL, AND BEEF CHEEK, ALL SLOW-BRAISED WITH MEXICAN CHILIS TO DEVELOP RICH, AUTHENTIC FLAVORS.",
+    "hero_title": "FRANCKIES",
+    "hero_copy": "FRANCKIES IS AN EXPLORATION OF AUTHENTIC MEXICAN STREET FOOD THROUGH THE LENS OF CHEF NUNO. SOURCING FRESHEST LOCAL PRODUCE AND HIGHEST QUALITY MEATS AND SEAFOOD.",
+    "secret_sauce_title": "THE SECRET SAUCE OF FRANCKIES",
+    "secret_sauce_copy": "WITH THE CELEBRATION OF OUR CULINARY PASSION, FRANCKIES FEATURES HAND-PRESSED TORTILLAS MADE FROM HEIRLOOM CORN SOURCED FROM OAXACA AND SIGNATURE BARBACOA CRAFTED FROM SHORT-RIB, OXTAIL, AND BEEF CHEEK, ALL SLOW-BRAISED WITH MEXICAN CHILIS TO DEVELOP RICH, AUTHENTIC FLAVORS.",
     "order_url": "https://frankiesbreakfastburritos.toast.site/",
     "menu_primary_label": "MENU",
     "menu_primary_url": "https://www.uptown66.miami/miamimenu",
@@ -25,13 +25,13 @@
       "https://static.wixstatic.com/media/da4e2b_74d8698ded274f3dae5101dd7c0c4de2~mv2.jpg/v1/fill/w_147,h_182,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMG_2672.jpg"
     ],
     "about_title": "GET TO KNOW US",
-    "about_copy": "Inspired by our creators Nuno Grullon and Akira van Egmond, Upper East Side MiMo District's favorite Mexican cantina is an exploration of authentic Mexican street food through the lens of Chef Nuno. Sourcing the freshest local produce and highest quality meats and seafood, Uptown 66 has become a standard for quality and consistency for locals and visitors alike. Our atmosphere evolves throughout the day, from lunch and happy hour to late-night dining, while staying grounded in flavor, craft, and consistency.",
+    "about_copy": "Inspired by our creators Nuno Grullon and Akira van Egmond, Upper East Side MiMo District's favorite Mexican cantina is an exploration of authentic Mexican street food through the lens of Chef Nuno. Sourcing the freshest local produce and highest quality meats and seafood, Franckies has become a standard for quality and consistency for locals and visitors alike. Our atmosphere evolves throughout the day, from lunch and happy hour to late-night dining, while staying grounded in flavor, craft, and consistency.",
     "about_banner_image": "https://static.wixstatic.com/media/da4e2b_71a8a0efdfd7425da73e0202e531a5b3~mv2.jpg/v1/fill/w_147,h_98,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/3Q5A0140.jpg",
     "about_portrait_image": "https://static.wixstatic.com/media/da4e2b_e103d357da0a4916b06677b312345181_mv2.png/v1/crop/x_112,y_0,w_345,h_480/fill/w_86,h_120,al_c,q_85,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMG_2459_heic.png",
     "about_primary_image": "https://static.wixstatic.com/media/da4e2b_f3b6ad77ffc44f4497ea6512d9897c46_mv2.jpg/v1/fill/w_147,h_98,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMGL0409_JPG.jpg",
     "about_secondary_image": "https://static.wixstatic.com/media/da4e2b_0046467888ae4c36bcb37ea88d6821c4~mv2.jpg/v1/fill/w_147,h_221,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/IMGL0127_JPG.jpg",
     "press_title": "PRESS",
-    "press_copy": "Featured coverage for Uptown 66, from Miami food press to national recognition.",
+    "press_copy": "Featured coverage for Franckies, from Miami food press to national recognition.",
     "press_item_1_image": "https://static.wixstatic.com/media/da4e2b_cc208a132d5d4d97893e956871c56f1f_mv2.jpeg/v1/fill/w_147,h_83,al_c,q_80,usm_0.66_1.00_0.01,blur_2,enc_avif,quality_auto/MIA_104UPTOWN6600MIAPPP.jpg",
     "press_item_1_outlet": "MIAMI HERALD",
     "press_item_1_title": "This outdoor Mexican restaurant in Miami just won a national TV contest for best taco",
@@ -59,7 +59,7 @@
     "happy_hour_heading": "HAPPY HOUR",
     "hallandale_happy_hour_copy": "Monday-Friday\n4pm-7pm",
     "menu_page_title": "MENU",
-    "menu_page_brand": "UPTOWN 66",
+    "menu_page_brand": "FRANCKIES",
     "miami_menu_sections": [
       {
         "title": "Tacos",
@@ -146,7 +146,7 @@
     },
     {
       "id": 6,
-      "quote": "Wowowow! I am pleased to find a place in Miami where they focus on the food and not just atmosphere. This place has it all! Everything we had was amazing. What I loved the most was the shrimp. Yes for Uptown 66!! Prices are super decent too for the food it&#8217;s so worth it. See you soon uptown.",
+      "quote": "Wowowow! I am pleased to find a place in Miami where they focus on the food and not just atmosphere. This place has it all! Everything we had was amazing. What I loved the most was the shrimp. Yes for Franckies!! Prices are super decent too for the food it&#8217;s so worth it. See you soon Franckies.",
       "author": "Mary Ellen Carrillo",
       "title": "Mary Ellen Carrillo",
       "featured_image": ""
@@ -163,7 +163,7 @@
     {
       "id": 9,
       "name": "Hallandale",
-      "copy": "Second Uptown 66 location with editable content from WordPress.",
+      "copy": "Second Franckies location with editable content from WordPress.",
       "address": "801 N Federal Hwy Suite 109-110",
       "city": "Hallandale Beach, FL 33009",
       "menu_url": "https://www.uptown66.miami/hallandalemenu",
@@ -175,7 +175,7 @@
     {
       "id": 8,
       "name": "MiMo",
-      "copy": "Original Uptown 66 location serving Mexican street food in Miami.",
+      "copy": "Original Franckies location serving Mexican street food in Miami.",
       "address": "6600 Biscayne Blvd",
       "city": "Miami, FL 33138",
       "menu_url": "https://www.uptown66.miami/miamimenu",
