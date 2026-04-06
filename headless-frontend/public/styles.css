@@ -180,7 +180,7 @@ img {
   height: auto;
   object-fit: contain;
   filter: brightness(0) invert(1);
-  animation: skull-rotate 12s linear infinite;
+  animation: skull-rotate 4s ease-in-out infinite;
   transform-origin: center center;
 }
 
@@ -194,28 +194,27 @@ img {
 
 @media screen and (max-width: 750px) {
   .skull-row {
-    gap: 80px;
-    margin: 60px 0;
-    min-height: 250px;
+    gap: 20px;
+    margin: 40px 0;
+    min-height: 180px;
   }
   .skull-row img {
-    width: 80px;
+    width: 60px;
   }
   .skull-row img:nth-child(even) {
-    margin-top: 50px;
+    margin-top: 30px;
   }
   .skull-row img:nth-child(odd) {
-    margin-top: -50px;
+    margin-top: -30px;
   }
 }
 
 @keyframes skull-rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(12deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-12deg); }
+  100% { transform: rotate(0deg); }
 }
 
 .testimonials {
